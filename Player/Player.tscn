@@ -95,12 +95,14 @@ _data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0
 script = SubResource( 1 )
 
 [node name="Weapons" type="Node2D" parent="."]
+position = Vector2( 0, -35 )
 
 [node name="FlakCannon" parent="Weapons" instance=ExtResource( 1 )]
 position = Vector2( 0, -27 )
 
 [node name="LaserBeam" parent="Weapons" instance=ExtResource( 2 )]
 visible = false
+position = Vector2( 0, 0 )
 rotation = -3.14159
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
