@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends RayCast2D
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+export (float) var beam_speed = 800
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	visible = false
+	$fill.points[0] = Vector2(0, 0)
+	$outline.points[0] = Vector2(0, 0)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+func _physics_process(delta):
+	if Input.is_action_just_pressed(\"shoot\"):
+		visible = true
+		cast_to = Vector2(0, 0)
+		
+	if Input.is_action_pressed(\"shoot\"):
+		cast_to += Vector2(0, beam_speed) * delta
+		if not is_colliding():
+			$fill.points[1] = cast_to
+			$outline.points[1] = cast_to
+		else:
+			$fill.points[1] = to_local(get_collision_point())
+			$outline.points[1] = to_local(get_collision_point())
+	
+	if Input.is_action_just_released(\"shoot\"):
+		visible = false
+		cast_to = Vector2(0, 0)"
+
+[node name="LaserBeam" type="RayCast2D"]
+script = SubResource( 1 )
+
+[node name="outline" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 4, 0, 54 )
+width = 16.0
+default_color = Color( 0.0862745, 0.180392, 0.643137, 1 )
+texture_mode = 0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="fill" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 4, 0, 54 )
+default_color = Color( 0.4, 0.501961, 1, 1 )
+texture_mode = 0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
