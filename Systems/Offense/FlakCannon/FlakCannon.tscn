@@ -23,12 +23,11 @@ func _process(delta):
 
 func shoot()->void:
 	for i in range(15):
-		var bullet_instance = bullet.instance()
+		var bullet_instance: Area2D = bullet.instance()
 		bullet_instance.set_name(\"bullet\" + str(i))
-		bullet_instance.rotation_degrees += (randi() % spread) - (spread/2)
 		bullet_instance.position = to_global($Position2D.position)
-		$Bullets.add_child(bullet_instance)
 		bullet_instance.rotation_degrees = global_rotation_degrees + (randi() % spread) - (spread/2)
+		$Bullets.add_child(bullet_instance)
 	can_shoot = false
 	$TimerCooldown.start()
 	

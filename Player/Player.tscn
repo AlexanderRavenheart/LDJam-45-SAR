@@ -35,9 +35,9 @@ func _ready():
 	ACCELERATION = ACCELERATION * percent
 	
 	#disable laser
-	$Weapons/LaserBeam.queue_free()
+	# $Weapons/LaserBeam.queue_free()
 	# disable flak cannon
-	#$Weapons/FlakCannon.queue_free()
+	$Weapons/FlakCannon.queue_free()
 	
 	self.current_shield = (randi() % 100) + 1 
 	

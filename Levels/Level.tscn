@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Assets/bg.png" type="Texture" id=2]
+[ext_resource path="res://Assets/bg.png" type="Texture" id=1]
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Objects/asteroid1.png" type="Texture" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
@@ -26,12 +26,13 @@ func _on_Player_shield_changed(value: int)->void:
 
 [node name="Level" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 495, 277 )
-
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 2 )
+scale = Vector2( 4, 4 )
+texture = ExtResource( 1 )
 centered = false
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+position = Vector2( 495, 277 )
 
 [node name="KinematicBody2D" type="RigidBody2D" parent="."]
 position = Vector2( 117.325, 194.94 )
