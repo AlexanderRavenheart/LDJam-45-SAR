@@ -1,18 +1,113 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 30.7669, 30.7644 )
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
 
-[node name="Player" type="KinematicBody2D"]
-script = ExtResource( 1 )
+export (int, 10, 100, 10) var MAX_HP: int = 100
+export (int, 10, 100, 10) var POWER: int = 50
+export (int, 10, 100, 10) var MOBILITY: int = 50
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0.609791, 0.390209 )
-scale = Vector2( 0.949694, 0.949694 )
-texture = ExtResource( 2 )
+var current_hp = MAX_HP
+
+var TURN_SPEED:int = 360
+var MOVE_SPEED:int = 300
+var ACCELERATION:float = 0.1
+var FRICTION:float = 0.01
+
+var motion = Vector2()
+
+var screen_size
+var warp_buffer = 32
+
+func _ready():
+	screen_size = get_viewport_rect().size
+	var percent = MOBILITY / 100.0
+	TURN_SPEED *= percent
+	MOVE_SPEED *= percent
+	ACCELERATION = ACCELERATION * percent
+	
+
+func _physics_process(delta):
+	if Input.is_action_pressed(\"rotate_left\"):
+		rotation_degrees -= TURN_SPEED * delta
+	if Input.is_action_pressed(\"rotate_right\"):
+		rotation_degrees += TURN_SPEED * delta
+	
+	var move_direction = Vector2(1, 0).rotated(rotation-PI/2)
+	
+	# acceleration
+	if Input.is_action_pressed(\"accelerate\"):
+		motion = motion.linear_interpolate(move_direction, ACCELERATION)
+		$EngineParticles.emitting = true
+	elif Input.is_action_just_released(\"accelerate\"):
+		$EngineParticles.emitting = false
+	
+	# \"friction\"
+	motion = motion.linear_interpolate(Vector2(), FRICTION)
+	
+	# apply motion
+	position += motion * MOVE_SPEED * delta
+	
+	# warp around the level
+	position.x = wrapf(position.x, -warp_buffer, screen_size.x + warp_buffer)
+	position.y = wrapf(position.y, -warp_buffer, screen_size.y + warp_buffer)
+	
+
+
+"
+
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 28.7506
+height = 6.63346
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
+
+[node name="Player" type="Area2D"]
+script = SubResource( 1 )
+
+[node name="Weapons" type="Node2D" parent="."]
+
+[node name="LaserBeam" parent="Weapons" instance=ExtResource( 1 )]
+visible = false
+rotation = -3.14159
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource( 2 )
+
+[node name="EngineParticles" type="CPUParticles2D" parent="."]
+position = Vector2( 0, 25.9235 )
+rotation = 1.5708
+emitting = false
+amount = 16
+speed_scale = 5.54
+randomness = 0.53
+texture = ExtResource( 2 )
+emission_shape = 2
+emission_rect_extents = Vector2( 1, 5 )
+spread = 0.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 32.5
+linear_accel = 59.84
+linear_accel_random = 0.18
+damping = 60.63
+damping_random = 0.2
+scale_amount_curve = SubResource( 4 )
+
+[node name="TrailParticles" type="CPUParticles2D" parent="."]
+amount = 32
+lifetime = 10.0
+speed_scale = 2.0
+local_coords = false
+texture = ExtResource( 2 )
+emission_shape = 2
+emission_rect_extents = Vector2( 1, 1 )
+spread = 0.0
+gravity = Vector2( 0, 0 )
+scale_amount = 0.1
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
