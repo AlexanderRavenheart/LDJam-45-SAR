@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Light_beam.png" type="Texture" id=1]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends RayCast2D
@@ -7,12 +9,13 @@ script/source = "extends RayCast2D
 # var a = 2
 # var b = \"text\"
 export (float) var beam_speed = 800
+export (float) var beam_max_length = 200
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	visible = false
-	$fill.points[0] = Vector2(0, 0)
-	$outline.points[0] = Vector2(0, 0)
+	$fill.points[0] = Vector2(0, 4)
+	$outline.points[0] = Vector2(0, 4)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -25,18 +28,23 @@ func _physics_process(delta):
 		
 	if Input.is_action_pressed(\"shoot\"):
 		cast_to += Vector2(0, beam_speed) * delta
+		if cast_to > Vector2(0, beam_max_length):
+			cast_to = Vector2(0, beam_max_length)
+		force_raycast_update()
 		if not is_colliding():
 			$fill.points[1] = cast_to
 			$outline.points[1] = cast_to
 		else:
 			$fill.points[1] = to_local(get_collision_point())
 			$outline.points[1] = to_local(get_collision_point())
+			print(get_collider())
 	
 	if Input.is_action_just_released(\"shoot\"):
 		visible = false
 		cast_to = Vector2(0, 0)"
 
 [node name="LaserBeam" type="RayCast2D"]
+position = Vector2( 0.698334, 0 )
 script = SubResource( 1 )
 
 [node name="outline" type="Line2D" parent="."]
@@ -49,9 +57,14 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="fill" type="Line2D" parent="."]
+position = Vector2( -0.301697, 0 )
 points = PoolVector2Array( 0, 4, 0, 54 )
 default_color = Color( 0.4, 0.501961, 1, 1 )
 texture_mode = 0
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 1 )
+color = Color( 0.105882, 0.564706, 0.968627, 1 )
