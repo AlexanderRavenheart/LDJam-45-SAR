@@ -11,6 +11,10 @@ var start_time
 var count_time: bool
 var start_position : Vector2
 
+var level
+var player
+var hud
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	scrap_count = 0
@@ -37,39 +41,47 @@ func _on_new_game():
 	
 	# Add the first level
 	var first_level_resource = load(\"res://Levels/Level1.tscn\")
-	var first_level = first_level_resource.instance()
-	add_child(first_level)
+	level = first_level_resource.instance()
+	add_child(level)
 	print(\"First Level Loaded\")
 	
 	# Spawn Player
 	var player_resource = load(\"res://Player/Player.tscn\")
-	var player_node = player_resource.instance()
-	player_node.position = start_position
-	add_child(player_node)
+	player = player_resource.instance()
+	player.position = start_position
+	add_child(player)
 	print(\"Player Loaded\")
 	
 	# Load HUD
 	var hud_resource = load(\"res://Player/HUD.tscn\")
-	var hud_node = hud_resource.instance()
-	add_child(hud_node)
-	print(first_level.scrap_amount)
-	hud_node.set_max_scrap_ammount(first_level.scrap_amount)
+	hud = hud_resource.instance()
+	add_child(hud)
+	hud.set_max_scrap_ammount(level.scrap_amount)
 	print(\"HUD Loaded\")
 	start_time = OS.get_ticks_msec()
 	count_time = true
 	
+	connect_player_signals()
+	
+func connect_player_signals():
+	player.connect(\"armor_changed\", hud, \"_on_Player_armor_changed\")
+	player.connect(\"shield_changed\", hud, \"_on_Player_shield_changed\")
+	player.connect(\"armor_changed\", self, \"_on_player_armor_changed\")
+
+func _on_player_armor_changed(value):
+	if value <= 0:
+		# yield(player, \"player_destroyed\")
+		print(\"Game Over\")
 
 func _on_level_complete():
 	print(\"Level Complete\")
 
 func increase_scrap_count(value):
 	scrap_count += value
-	print(scrap_count)
 	$HUD._on_progress_increased(scrap_count)
 	check_if_level_is_complete()
 	
 func check_if_level_is_complete():
-	return
 	if scrap_count >= $Level.max_scrap_count:
 		_on_level_complete()"
 
