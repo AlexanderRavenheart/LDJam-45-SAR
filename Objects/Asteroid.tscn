@@ -56,6 +56,11 @@ func _integrate_forces(state):
 	angular_velocity = clamp(angular_velocity, -5, 5)
 
 func _exit_tree():
+	if iteration == 1:
+		var level = get_parent().get_parent()
+		if level:
+			level.number_of_asteroids -= 1
+		
 	if iteration < max_iterations:
 		var parent = get_parent()
 		
@@ -89,6 +94,8 @@ func _exit_tree():
 			asteroid.apply_central_impulse(local_damage_direction.rotated(deg2rad(dir * 90)) * 50 * 0.3/(iteration))
 			asteroid.position = new_pos
 			parent.add_child(asteroid)
+		
+		
 
 func init_graphics()->void:
 	var frames = $Sprite.texture.get_width() / 32
