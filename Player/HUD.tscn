@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+onready var player = get_node(\"../Player\");
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	print(\"player: \", player.current_hp, \", \", player.current_shield);
+	
+
+func _on_Player_armor_changed(value: int)->void:
+	$LabelArmor/Text.text = str(value)
+
+func _on_Player_shield_changed(value: int)->void:
+	$LabelShield/Text.text = str(value)
+"
+
+[node name="HUD" type="Control"]
+editor/display_folded = true
+margin_right = 40.0
+margin_bottom = 40.0
+script = SubResource( 1 )
+
+[node name="LabelArmor" type="Label" parent="."]
+margin_left = 11.0002
+margin_top = 11.0002
+margin_right = 59.0002
+margin_bottom = 25.0002
+text = "Armor: "
+
+[node name="Text" type="Label" parent="LabelArmor"]
+margin_left = 46.0
+margin_right = 76.0
+margin_bottom = 14.0
+text = "100"
+
+[node name="LabelShield" type="Label" parent="."]
+margin_left = 11.0002
+margin_top = 26.8533
+margin_right = 54.0002
+margin_bottom = 40.8533
+text = "Shield:"
+
+[node name="Text" type="Label" parent="LabelShield"]
+margin_left = 46.0
+margin_right = 76.0
+margin_bottom = 14.0
+text = "100"
