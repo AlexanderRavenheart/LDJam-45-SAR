@@ -13,13 +13,12 @@ var rotation_dir := 1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Sprite.region_rect.position = Vector2( 10 * randi() % 13, 0.0)
+	$Sprite.region_rect.position = Vector2( 10 * (randi() % 13), 0)
 	rotation_speed = rand_range(0.25, 0.5)
 	if (randi() % 100) < 50:
 		rotation_dir = -1
 	else:
 		rotation_dir = 1
-	print('dir: ', rotation_dir, ', speed: ', rotation_speed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

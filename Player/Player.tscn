@@ -1,9 +1,13 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=3]
 [ext_resource path="res://icon.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Ships/shipsBase.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Ships/shipsMid.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Ships/shipsTop.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Ships/shipsWings.png" type="Texture" id=8]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends KinematicBody2D
@@ -36,6 +40,8 @@ func _ready():
 	TURN_SPEED *= percent
 	MOVE_SPEED *= percent
 	ACCELERATION *= percent
+	
+	build_ship()
 	
 	# disable laser
 	$Weapons/LaserBeam.queue_free()
@@ -93,7 +99,15 @@ func _physics_process(delta):
 		self.current_hp += 10
 	elif Input.is_action_just_pressed(\"ui_down\"):
 		self.current_hp -= 10
+
+func build_ship()->void:
+	$Graphic/Chassis.frame = randi() % 6
+	$Graphic/Body.frame = randi() % 6
+	$Graphic/Top.frame = randi() % 6
+	$Graphic/WingLeft.frame = randi() % 6
+	$Graphic/WingRight.frame = randi() % 6
 	
+
 
 
 "
@@ -143,6 +157,7 @@ damping_random = 0.2
 scale_amount_curve = SubResource( 2 )
 
 [node name="TrailParticles" type="CPUParticles2D" parent="."]
+emitting = false
 amount = 32
 lifetime = 10.0
 speed_scale = 2.0
@@ -156,8 +171,31 @@ scale_amount = 0.1
 
 [node name="Graphic" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite" parent="Graphic"]
-texture = ExtResource( 4 )
+[node name="Chassis" type="Sprite" parent="Graphic"]
+texture = ExtResource( 5 )
+hframes = 6
+
+[node name="Body" type="Sprite" parent="Graphic"]
+texture = ExtResource( 6 )
+hframes = 6
+frame = 1
+
+[node name="Top" type="Sprite" parent="Graphic"]
+position = Vector2( 0, -23.8966 )
+texture = ExtResource( 7 )
+hframes = 7
+
+[node name="WingLeft" type="Sprite" parent="Graphic"]
+position = Vector2( -17.0875, 0 )
+texture = ExtResource( 8 )
+hframes = 6
+
+[node name="WingRight" type="Sprite" parent="Graphic"]
+position = Vector2( 17.081, 0 )
+scale = Vector2( -1, 1 )
+texture = ExtResource( 8 )
+hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource( 3 )
