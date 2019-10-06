@@ -4,31 +4,16 @@
 script/source = "extends Node
 
 # This Node will apply damage to his parent
-
-var invulnerable := true
 var last_damage_direction := Vector2()
 
-func setSpawnInvulnerabilityTimer(value: float)->void:
-	$InvulnerabilityTimer.wait_time = value
-
 func doDamage(weapon: Node2D)->void:
-	if not invulnerable:
-		var parent = get_parent() as RigidBody2D
-		parent.current_hp -= weapon.damage
-		last_damage_direction = (weapon.global_position - parent.global_position).normalized()
-		if parent.current_hp <= 0:
-			# here do explosions
-			parent.queue_free()
-
-func _on_InvulnerabilityTimer_timeout():
-	invulnerable = false
-"
+	var parent = get_parent() as RigidBody2D
+	print(\"do damage: \", parent.current_hp, \", \", weapon.damage)
+	parent.current_hp -= weapon.damage
+	last_damage_direction = (weapon.global_position - parent.global_position).normalized()
+	if parent.current_hp <= 0:
+		# here do explosions
+		parent.queue_free()"
 
 [node name="TakesDamage" type="Node"]
 script = SubResource( 1 )
-
-[node name="InvulnerabilityTimer" type="Timer" parent="."]
-wait_time = 0.5
-one_shot = true
-autostart = true
-[connection signal="timeout" from="InvulnerabilityTimer" to="." method="_on_InvulnerabilityTimer_timeout"]
