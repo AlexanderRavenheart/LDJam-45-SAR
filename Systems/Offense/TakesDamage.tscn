@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+func _doDamage(weapon: Node2D)->void:
+	var parent = get_parent()
+	parent.current_hp -= weapon.damage
+	if parent.current_hp <= 0:
+		# here do explosions
+		parent.queue_free()"
+
+[node name="TakesDamage" type="Node"]
+script = SubResource( 1 )

@@ -1,13 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Assets/bg.png" type="Texture" id=1]
-[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/Objects/asteroid1.png" type="Texture" id=3]
+[ext_resource path="res://Objects/Asteroid.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=3]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 13.1787
-
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Control
 
 onready var player = get_node(\"../Player\");
@@ -26,32 +23,30 @@ func _on_Player_shield_changed(value: int)->void:
 
 [node name="Level" type="Node2D"]
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Background" type="Sprite" parent="."]
 scale = Vector2( 4, 4 )
 texture = ExtResource( 1 )
 centered = false
-
-[node name="Player" parent="." instance=ExtResource( 2 )]
-position = Vector2( 495, 277 )
-
-[node name="KinematicBody2D" type="RigidBody2D" parent="."]
-position = Vector2( 117.325, 194.94 )
-gravity_scale = 0.0
 __meta__ = {
-"_edit_group_": true
+"_edit_lock_": true
 }
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
-shape = SubResource( 1 )
+[node name="Entities" type="Node" parent="."]
 
-[node name="Sprite" type="Sprite" parent="KinematicBody2D"]
-texture = ExtResource( 3 )
+[node name="Asteroid" parent="Entities" instance=ExtResource( 2 )]
+position = Vector2( 314.681, 364.543 )
+
+[node name="Asteroid2" parent="Entities" instance=ExtResource( 2 )]
+position = Vector2( 715.944, 241.931 )
+
+[node name="Player" parent="." instance=ExtResource( 3 )]
+position = Vector2( 495, 277 )
 
 [node name="HUD" type="Control" parent="."]
 editor/display_folded = true
 margin_right = 40.0
 margin_bottom = 40.0
-script = SubResource( 2 )
+script = SubResource( 1 )
 
 [node name="LabelArmor" type="Label" parent="HUD"]
 margin_left = 11.0002
