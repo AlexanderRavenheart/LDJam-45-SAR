@@ -6,16 +6,24 @@
 script/source = "extends Node
 
 var scrap_count: int
+var time_elapsed : int
+var start_time
+var count_time: bool
+var start_position : Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	scrap_count = 0
+	time_elapsed = 0
+	count_time = false
+	start_position = get_viewport().get_visible_rect().size / 2
 	$MainMenu.connect(\"quit_game\", self, \"_on_quit_game\")
 	$MainMenu.connect(\"new_game\", self, \"_on_new_game\")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	if count_time:
+		$HUD._on_time_elapsed( OS.get_ticks_msec() - start_time)
 
 func _on_quit_game():
 	get_tree().quit()
@@ -32,13 +40,35 @@ func _on_new_game():
 	var first_level = first_level_resource.instance()
 	add_child(first_level)
 	print(\"First Level Loaded\")
+	
+	# Spawn Player
+	var player_resource = load(\"res://Player/Player.tscn\")
+	var player_node = player_resource.instance()
+	player_node.position = start_position
+	add_child(player_node)
+	print(\"Player Loaded\")
+	
+	# Load HUD
+	var hud_resource = load(\"res://Player/HUD.tscn\")
+	var hud_node = hud_resource.instance()
+	add_child(hud_node)
+	print(\"HUD Loaded\")
+	start_time = OS.get_ticks_msec()
+	count_time = true
+	
+
+func _on_level_complete():
+	print(\"Level Complete\")
 
 func increase_scrap_count(value):
 	scrap_count += value
+	$HUD._on_progress_increased(scrap_count)
 	check_if_level_is_complete()
 	
 func check_if_level_is_complete():
-	pass"
+	return
+	if scrap_count >= $Level.max_scrap_count:
+		_on_level_complete()"
 
 [node name="GameManager" type="Node"]
 script = SubResource( 1 )

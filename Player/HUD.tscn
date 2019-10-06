@@ -17,11 +17,49 @@ script/source = "extends Control
 
 onready var player = get_node(\"../Player\");
 
+enum TimeFormat {
+    FORMAT_HOURS   = 1 << 0,
+    FORMAT_MINUTES = 1 << 1,
+    FORMAT_SECONDS = 1 << 2,
+    FORMAT_DEFAULT = 1 << 0 | 1 << 1 | 1 << 2
+}
+
+func format_time(time, format = TimeFormat.FORMAT_DEFAULT, digit_format = \"%02d\"):
+    var digits = []
+
+    if format & TimeFormat.FORMAT_HOURS:
+        var hours = digit_format % [time / 3600]
+        digits.append(hours)
+
+    if format & TimeFormat.FORMAT_MINUTES:
+        var minutes = digit_format % [time / 60]
+        digits.append(minutes)
+
+    if format & TimeFormat.FORMAT_SECONDS:
+        var seconds = digit_format % [int(ceil(time)) % 60]
+        digits.append(seconds)
+
+    var formatted = String()
+    var colon = \" : \"
+
+    for digit in digits:
+        formatted += digit + colon
+
+    if not formatted.empty():
+        formatted = formatted.rstrip(colon)
+
+    return formatted
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
 	#print(\"player: \", player.current_hp, \", \", player.current_shield);
-	
+
+func _on_time_elapsed(time_ms):
+	$GridContainer/TimeContainer/TimeLabel.text = format_time(time_ms / 1000, TimeFormat.FORMAT_MINUTES | TimeFormat.FORMAT_SECONDS)
+
+func _on_progress_increased(value):
+	$ProgressContainer/LevelProgress.value = value
 
 func _on_Player_armor_changed(value: int)->void:
 	$LabelArmor/Text.text = str(value)
@@ -45,11 +83,13 @@ margin_top = 10.0
 margin_right = 470.0
 margin_bottom = 260.0
 columns = 2
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GridContainer"]
-editor/display_folded = true
 margin_right = 409.0
-margin_bottom = 20.0
+margin_bottom = 11.0
 size_flags_horizontal = 3
 
 [node name="HealthContainer" type="HBoxContainer" parent="GridContainer/VBoxContainer"]
@@ -87,6 +127,7 @@ valign = 1
 
 [node name="ShieldContainer" type="HBoxContainer" parent="GridContainer/VBoxContainer"]
 editor/display_folded = true
+visible = false
 margin_top = 12.0
 margin_right = 121.0
 margin_bottom = 20.0
@@ -120,7 +161,6 @@ align = 1
 valign = 1
 
 [node name="TimeContainer" type="HBoxContainer" parent="GridContainer"]
-editor/display_folded = true
 margin_left = 413.0
 margin_right = 460.0
 margin_bottom = 11.0
@@ -128,7 +168,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 custom_constants/separation = 6
 
-[node name="Label" type="Label" parent="GridContainer/TimeContainer"]
+[node name="TimeLabel" type="Label" parent="GridContainer/TimeContainer"]
 margin_right = 32.0
 margin_bottom = 11.0
 size_flags_horizontal = 0
@@ -145,17 +185,21 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 texture = ExtResource( 8 )
 
-[node name="ProgressContainer" type="HBoxContainer" parent="GridContainer"]
-margin_top = 24.0
-margin_right = 409.0
-margin_bottom = 32.0
+[node name="ProgressContainer" type="HBoxContainer" parent="."]
+margin_left = 167.0
+margin_top = 252.0
+margin_right = 313.0
+margin_bottom = 260.0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="GridContainer/ProgressContainer"]
+[node name="ProgressIcon" type="TextureRect" parent="ProgressContainer"]
 margin_right = 9.0
 margin_bottom = 8.0
 texture = ExtResource( 9 )
 
-[node name="TextureProgress" type="TextureProgress" parent="GridContainer/ProgressContainer"]
+[node name="LevelProgress" type="TextureProgress" parent="ProgressContainer"]
 margin_left = 13.0
 margin_right = 146.0
 margin_bottom = 8.0

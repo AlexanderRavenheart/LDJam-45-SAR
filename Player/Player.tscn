@@ -41,8 +41,6 @@ func _ready():
 	MOVE_SPEED *= percent
 	ACCELERATION *= percent
 	
-	build_ship()
-	
 	# disable laser
 	$Weapons/LaserBeam.queue_free()
 	# disable flak cannon
@@ -99,20 +97,12 @@ func _physics_process(delta):
 		self.current_hp += 10
 	elif Input.is_action_just_pressed(\"ui_down\"):
 		self.current_hp -= 10
-
-func build_ship()->void:
-	$Graphic/Chassis.frame = randi() % 6
-	$Graphic/Body.frame = randi() % 6
-	$Graphic/Top.frame = randi() % 6
-	$Graphic/WingLeft.frame = randi() % 6
-	$Graphic/WingRight.frame = randi() % 6
 	
-
 
 
 "
 
-[sub_resource type="Curve" id=2]
+[sub_resource type="Curve" id=4]
 _data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
 
 [sub_resource type="CapsuleShape2D" id=3]
@@ -154,7 +144,7 @@ linear_accel = 59.84
 linear_accel_random = 0.18
 damping = 60.63
 damping_random = 0.2
-scale_amount_curve = SubResource( 2 )
+scale_amount_curve = SubResource( 4 )
 
 [node name="TrailParticles" type="CPUParticles2D" parent="."]
 emitting = false
