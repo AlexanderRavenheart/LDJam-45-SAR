@@ -1,0 +1,102 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/bg.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var asteroid_res = load(\"res://Objects/Asteroid.tscn\")
+
+export (int) var level: int = 1
+export (int) var max_enemies: int = 2
+export (int) var max_asteroids: int = 5
+export (int) var scrap_amount: int = 20
+export (int) var spawn_cooldown: float = 3
+
+var number_of_asteroids := 0
+var number_of_enemies := 0
+
+onready var level_size = get_viewport_rect().size
+
+func _ready()->void:
+	$SpawnTimerAsteroid.one_shot = false
+	$SpawnTimerAsteroid.autostart = true
+	$SpawnTimerAsteroid.wait_time = spawn_cooldown
+	$SpawnTimerEnemy.one_shot = false
+	$SpawnTimerEnemy.autostart = true
+	$SpawnTimerEnemy.wait_time = spawn_cooldown
+	initial_spawn()
+
+func _process(delta):
+	if Input.is_action_just_pressed(\"ui_left\"):
+		number_of_asteroids -= 1
+	if Input.is_action_just_pressed(\"ui_right\"):
+		number_of_enemies -= 1
+	$Label.text = str(number_of_asteroids)
+	get_node(\"Label2\").text = str(number_of_enemies)
+
+func initial_spawn()->void:
+	for i in range(max_asteroids):
+		print(\"Spawn asteroid \", i)
+		spawn_asteroid()
+	
+	for i in range(max_enemies):
+		print(\"Spawn enemy \", i)
+		spawn_enemy()
+
+func spawn_asteroid()->void:
+	number_of_asteroids += 1
+	print(\"Spawn asteroid \")
+	var asteroid = asteroid_res.instance() as RigidBody2D
+	var x: float
+	if (randi() % 10) < 5:
+		x = -35
+	else:
+		x = level_size.x
+	var y: float
+	if (randi() % 10) < 5:
+		y = -35
+	else:
+		y = level_size.y
+	asteroid.position = Vector2(x, y)
+	$Entities.add_child(asteroid)
+
+func spawn_enemy()->void:
+	number_of_enemies += 1
+	print(\"Spawn enemy \")
+
+func _on_SpawnTimerEnemy_timeout():
+	if number_of_enemies < max_enemies:
+		spawn_enemy()
+
+func _on_SpawnTimerAsteroid_timeout():
+	if number_of_asteroids < max_asteroids:
+		spawn_asteroid()
+"
+
+[node name="Level" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Background" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Entities" type="Node" parent="."]
+
+[node name="SpawnTimerAsteroid" type="Timer" parent="."]
+autostart = true
+
+[node name="SpawnTimerEnemy" type="Timer" parent="."]
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 1.89075
+margin_top = 18.2772
+margin_right = 41.8907
+margin_bottom = 32.2772
+[connection signal="timeout" from="SpawnTimerAsteroid" to="." method="_on_SpawnTimerAsteroid_timeout"]
+[connection signal="timeout" from="SpawnTimerEnemy" to="." method="_on_SpawnTimerEnemy_timeout"]
