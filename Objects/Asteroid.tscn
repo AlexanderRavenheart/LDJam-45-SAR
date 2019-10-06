@@ -17,6 +17,7 @@ var force := Vector2()
 
 var asteroid_resource = load(\"res://Objects/Asteroid.tscn\")
 var asteroid_explosion = load(\"res://Objects/AsteroidExposion.tscn\")
+var scrap_resource = load(\"res://Objects/Scrap.tscn\")
 
 var current_hp := 20
 var iteration := 1
@@ -68,6 +69,14 @@ func _exit_tree():
 		parent.add_child(explosion)
 		
 		# Here we can spawn scrap
+		var chance = (randi() % 100) > 30
+		print('scrap roll: ', chance)
+		if chance:
+			var scrap = scrap_resource.instance() as Area2D
+			scrap.global_position = global_position
+			scrap.scrap_value = int(rand_range(1, 3))
+			parent.add_child(scrap)
+		
 		for i in range(2):
 			var direction_vector = Vector2(cos(rotation), sin(rotation))
 			var local_damage_direction = $TakesDamage.last_damage_direction + direction_vector
