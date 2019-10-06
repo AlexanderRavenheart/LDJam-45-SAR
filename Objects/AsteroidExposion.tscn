@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Assets/Objects/asteroid1.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node2D
+
+func _on_Timer_timeout():
+	queue_free()
+"
+
+[sub_resource type="Curve" id=1]
+max_value = 100.0
+_data = [ Vector2( 0, 100 ), 0.0, 0.0, 0, 0, Vector2( 0.803213, 67.16 ), -113.478, -113.478, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=2]
+_data = [ Vector2( 0, 1 ), 0.0, -0.162961, 0, 0, Vector2( 1, 0 ), -0.164087, 0.0, 0, 0 ]
+
+[node name="AsteroidExposion" type="Node2D"]
+script = SubResource( 3 )
+
+[node name="Particles" type="CPUParticles2D" parent="."]
+lifetime = 1.37
+explosiveness = 0.76
+texture = ExtResource( 1 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 216.63
+initial_velocity_random = 0.14
+angular_velocity = 186.47
+angular_velocity_random = 0.29
+damping = 100.0
+damping_curve = SubResource( 1 )
+scale_amount = 0.5
+scale_amount_curve = SubResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.37
+one_shot = true
+autostart = true
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
