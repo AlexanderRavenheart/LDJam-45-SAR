@@ -18,7 +18,6 @@ func _on_Player_shield_changed(value: int)->void:
 "
 
 [node name="HUD" type="Control"]
-editor/display_folded = true
 margin_right = 40.0
 margin_bottom = 40.0
 script = SubResource( 1 )

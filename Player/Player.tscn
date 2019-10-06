@@ -23,6 +23,9 @@ var MOVE_SPEED:int = 300
 var ACCELERATION:float = 0.1
 var FRICTION:float = 0.01
 
+var speed = 750
+var velocity = Vector2()
+
 var motion = Vector2()
 
 var screen_size
@@ -32,7 +35,7 @@ func _ready():
 	var percent = MOBILITY / 100.0
 	TURN_SPEED *= percent
 	MOVE_SPEED *= percent
-	ACCELERATION = ACCELERATION * percent
+	ACCELERATION *= percent
 	
 	# disable laser
 	$Weapons/LaserBeam.queue_free()
@@ -41,6 +44,26 @@ func _ready():
 	
 	self.current_shield = (randi() % 100) + 1 
 	
+func get_input(delta):
+	# direction
+	if Input.is_action_pressed(\"rotate_left\"):
+		rotation_degrees -= TURN_SPEED * delta
+	if Input.is_action_pressed(\"rotate_right\"):
+		rotation_degrees += TURN_SPEED * delta
+		
+	var move_direction = Vector2(0, -1).rotated(rotation)
+	
+	# acceleration
+	if Input.is_action_pressed(\"accelerate\"):
+		motion = motion.linear_interpolate(move_direction, ACCELERATION)
+		$EngineParticles.emitting = true
+	elif Input.is_action_just_released(\"accelerate\"):
+		$EngineParticles.emitting = false
+		
+	# \"friction\"
+	# motion = motion.linear_interpolate(Vector2(), FRICTION)
+	
+	velocity = motion * MOVE_SPEED
 
 func set_current_hp(value: int)->void:
 	current_hp = max(value, 0)
@@ -51,25 +74,20 @@ func set_current_shield(value: int)->void:
 	emit_signal(\"shield_changed\", current_shield)
 
 func _physics_process(delta):
-	if Input.is_action_pressed(\"rotate_left\"):
-		rotation_degrees -= TURN_SPEED * delta
-	if Input.is_action_pressed(\"rotate_right\"):
-		rotation_degrees += TURN_SPEED * delta
-	
-	var move_direction = Vector2(0, -1).rotated(rotation)
-	
-	# acceleration
-	if Input.is_action_pressed(\"accelerate\"):
-		motion = motion.linear_interpolate(move_direction, ACCELERATION)
-		$EngineParticles.emitting = true
-	elif Input.is_action_just_released(\"accelerate\"):
-		$EngineParticles.emitting = false
-	
-	# \"friction\"
-	motion = motion.linear_interpolate(Vector2(), FRICTION)
+	get_input(delta)
+	var collision = move_and_collide(velocity * delta)
+	if collision:
+		print(velocity)
+		if collision.collider.get_class() == \"RigidBody2D\":
+			print(velocity)
+			var collider = collision.collider as RigidBody2D
+			if collider.collision_layer == 2 or collider.collision_layer == 4:
+				velocity = velocity.bounce(collision.normal)
+				print(velocity)
+				move_and_slide(velocity * delta)
 	
 	# apply motion
-	position += motion * MOVE_SPEED * delta
+	# position += motion * MOVE_SPEED * delta
 		
 	if Input.is_action_just_pressed(\"ui_up\"):
 		self.current_hp += 10
@@ -80,14 +98,16 @@ func _physics_process(delta):
 
 "
 
-[sub_resource type="Curve" id=3]
+[sub_resource type="Curve" id=2]
 _data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
 
-[sub_resource type="CapsuleShape2D" id=2]
+[sub_resource type="CapsuleShape2D" id=3]
 radius = 28.7506
 height = 6.63346
 
 [node name="Player" type="KinematicBody2D"]
+scale = Vector2( 0.25, 0.25 )
+collision_mask = 7
 script = SubResource( 1 )
 
 [node name="LevelWarp" parent="." instance=ExtResource( 1 )]
@@ -120,7 +140,7 @@ linear_accel = 59.84
 linear_accel_random = 0.18
 damping = 60.63
 damping_random = 0.2
-scale_amount_curve = SubResource( 3 )
+scale_amount_curve = SubResource( 2 )
 
 [node name="TrailParticles" type="CPUParticles2D" parent="."]
 amount = 32
@@ -140,4 +160,4 @@ scale_amount = 0.1
 texture = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 2 )
+shape = SubResource( 3 )

@@ -16,12 +16,19 @@ _global_script_class_icons={
 [application]
 
 config/name="LDjam45"
-run/main_scene="res://Levels/Level.tscn"
+run/main_scene="res://GameManager.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 global="*res://Systems/global.gd"
+
+[display]
+
+window/size/width=480
+window/size/height=270
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [importer_defaults]
 

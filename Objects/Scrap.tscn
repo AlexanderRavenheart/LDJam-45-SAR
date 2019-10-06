@@ -1,39 +1,45 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://icon.png" type="Texture" id=1]
+[ext_resource path="res://Assets/Objects/scrap.png" type="Texture" id=1]
+[ext_resource path="res://Assets/Audio/coin1.wav" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends StaticBody2D
+script/source = "extends Area2D
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = \"text\"
+export (int) var scrap_value = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$Sprite.region_rect.position = Vector2( 10 * randi() % 13, 0.0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+func _on_Scrap_body_entered(body):
+	var root = get_tree().get_root().get_node(\"GameManager\") 
+	root.increase_scrap_count(scrap_value)
+	$Audio.play()
+	visible = false
+	yield($Audio, \"finished\")
+	queue_free()
 "
 
-[sub_resource type="CircleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 4.5, 4.5 )
 
-[sub_resource type="SpriteFrames" id=3]
-animations = [ {
-"frames": [ ExtResource( 1 ) ],
-"loop": true,
-"name": "idle",
-"speed": 5.0
-} ]
-
-[node name="Scrap" type="StaticBody2D"]
+[node name="Scrap" type="Area2D"]
+gravity = 0.0
 script = SubResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-frames = SubResource( 3 )
-animation = "idle"
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 10, 10 )
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+[connection signal="body_entered" from="." to="." method="_on_Scrap_body_entered"]
