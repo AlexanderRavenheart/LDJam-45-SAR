@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Assets/Objects/asteroid1.png" type="Texture" id=1]
+[ext_resource path="res://Assets/Objects/asteroids.png" type="Texture" id=1]
 [ext_resource path="res://Systems/Offense/TakesDamage.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=3]
 
@@ -16,12 +16,14 @@ var move_direction := Vector2()
 var force := Vector2()
 
 var asteroid_resource = load(\"res://Objects/Asteroid.tscn\")
+var asteroid_explosion = load(\"res://Objects/AsteroidExposion.tscn\")
 
 var current_hp := 20
 var iteration := 1
 var max_iterations := 3
 
 func _ready():
+	init_graphics()
 	# random moving direction
 	move_direction = Vector2(rand_range(-1, 1), rand_range(-1, 1)).rotated(rotation)
 	var initial_impulse = rand_range(-max_starting_speed, max_starting_speed)
@@ -55,12 +57,22 @@ func _integrate_forces(state):
 func _exit_tree():
 	if iteration < max_iterations:
 		var parent = get_parent()
+		
+		# spawn explosion
+		var explosion = asteroid_explosion.instance() as Node2D
+		explosion.global_position = global_position
+		var part = explosion.get_node(\"Particles\") as CPUParticles2D
+		part.amount = 8 / iteration
+		part.scale_amount = 0.5 / iteration
+		print('explosion at: ', global_position)
+		parent.add_child(explosion)
+		
 		# Here we can spawn scrap
 		for i in range(2):
 			var direction_vector = Vector2(cos(rotation), sin(rotation))
 			var local_damage_direction = $TakesDamage.last_damage_direction + direction_vector
 			var asteroid = asteroid_resource.instance() as RigidBody2D
-			var new_pos = position + local_damage_direction * 32 * scale
+			var new_pos = position + local_damage_direction
 			asteroid.iteration = iteration + 1
 			var dir = 1
 			if i > 0:
@@ -68,7 +80,11 @@ func _exit_tree():
 			asteroid.apply_central_impulse(local_damage_direction.rotated(deg2rad(dir * 90)) * 50 * 0.3/(iteration))
 			asteroid.position = new_pos
 			parent.add_child(asteroid)
-"
+
+func init_graphics()->void:
+	var frames = $Sprite.texture.get_width() / 32
+	$Sprite.hframes = frames
+	$Sprite.frame = int(rand_range(0, frames))"
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 12.6016
@@ -87,6 +103,7 @@ script = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )
+hframes = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 3 )
