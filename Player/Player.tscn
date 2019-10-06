@@ -103,8 +103,8 @@ func _physics_process(delta):
 func doDamage(weapon)->void:
 	current_hp -= weapon.damage
 	if current_hp <= 0:
-		print(\"GAME OVER\")
-		var reloaded = get_tree().reload_current_scene()
+		current_hp = 0
+	emit_signal(\"armor_changed\", current_hp)
 
 func build_ship()->void:
 	$Graphic/Chassis.frame = randi() % 6
