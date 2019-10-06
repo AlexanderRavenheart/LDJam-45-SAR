@@ -27,14 +27,6 @@ func _ready()->void:
 	$SpawnTimerEnemy.wait_time = spawn_cooldown
 	initial_spawn()
 
-func _process(delta):
-	if Input.is_action_just_pressed(\"ui_left\"):
-		number_of_asteroids -= 1
-	if Input.is_action_just_pressed(\"ui_right\"):
-		number_of_enemies -= 1
-	$Label.text = str(number_of_asteroids)
-	get_node(\"Label2\").text = str(number_of_enemies)
-
 func initial_spawn()->void:
 	for i in range(max_asteroids):
 		print(\"Spawn asteroid \", i)
@@ -88,15 +80,5 @@ autostart = true
 
 [node name="SpawnTimerEnemy" type="Timer" parent="."]
 autostart = true
-
-[node name="Label" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
-
-[node name="Label2" type="Label" parent="."]
-margin_left = 1.89075
-margin_top = 18.2772
-margin_right = 41.8907
-margin_bottom = 32.2772
 [connection signal="timeout" from="SpawnTimerAsteroid" to="." method="_on_SpawnTimerAsteroid_timeout"]
 [connection signal="timeout" from="SpawnTimerEnemy" to="." method="_on_SpawnTimerEnemy_timeout"]
