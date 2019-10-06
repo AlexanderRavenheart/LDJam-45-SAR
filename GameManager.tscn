@@ -51,8 +51,9 @@ func _on_new_game():
 	# Load HUD
 	var hud_resource = load(\"res://Player/HUD.tscn\")
 	var hud_node = hud_resource.instance()
-	hud_node.set_max_scrap_ammount(first_level.scrap_amount)
 	add_child(hud_node)
+	print(first_level.scrap_amount)
+	hud_node.set_max_scrap_ammount(first_level.scrap_amount)
 	print(\"HUD Loaded\")
 	start_time = OS.get_ticks_msec()
 	count_time = true
@@ -63,6 +64,7 @@ func _on_level_complete():
 
 func increase_scrap_count(value):
 	scrap_count += value
+	print(scrap_count)
 	$HUD._on_progress_increased(scrap_count)
 	check_if_level_is_complete()
 	
