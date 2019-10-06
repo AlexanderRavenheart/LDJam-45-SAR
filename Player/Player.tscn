@@ -1,11 +1,12 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=2]
-[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends Area2D
+script/source = "extends KinematicBody2D
 
 export (int, 10, 100, 10) var MAX_HP: int = 100
 export (int, 10, 100, 10) var POWER: int = 50
@@ -28,16 +29,15 @@ var screen_size
 var warp_buffer = 32
 
 func _ready():
-	screen_size = get_viewport_rect().size
 	var percent = MOBILITY / 100.0
 	TURN_SPEED *= percent
 	MOVE_SPEED *= percent
 	ACCELERATION = ACCELERATION * percent
 	
-	#disable laser
-	# $Weapons/LaserBeam.queue_free()
+	# disable laser
+	$Weapons/LaserBeam.queue_free()
 	# disable flak cannon
-	$Weapons/FlakCannon.queue_free()
+	#$Weapons/FlakCannon.queue_free()
 	
 	self.current_shield = (randi() % 100) + 1 
 	
@@ -70,11 +70,7 @@ func _physics_process(delta):
 	
 	# apply motion
 	position += motion * MOVE_SPEED * delta
-	
-	# warp around the level
-	position.x = wrapf(position.x, -warp_buffer, screen_size.x + warp_buffer)
-	position.y = wrapf(position.y, -warp_buffer, screen_size.y + warp_buffer)
-	
+		
 	if Input.is_action_just_pressed(\"ui_up\"):
 		self.current_hp += 10
 	elif Input.is_action_just_pressed(\"ui_down\"):
@@ -84,29 +80,28 @@ func _physics_process(delta):
 
 "
 
+[sub_resource type="Curve" id=3]
+_data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
+
 [sub_resource type="CapsuleShape2D" id=2]
 radius = 28.7506
 height = 6.63346
 
-[sub_resource type="Curve" id=3]
-_data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
-
-[node name="Player" type="Area2D"]
+[node name="Player" type="KinematicBody2D"]
 script = SubResource( 1 )
+
+[node name="LevelWarp" parent="." instance=ExtResource( 1 )]
 
 [node name="Weapons" type="Node2D" parent="."]
 position = Vector2( 0, -35 )
 
-[node name="FlakCannon" parent="Weapons" instance=ExtResource( 1 )]
+[node name="FlakCannon" parent="Weapons" instance=ExtResource( 2 )]
 position = Vector2( 0, -27 )
 
-[node name="LaserBeam" parent="Weapons" instance=ExtResource( 2 )]
+[node name="LaserBeam" parent="Weapons" instance=ExtResource( 3 )]
 visible = false
 position = Vector2( 0, 0 )
 rotation = -3.14159
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 2 )
 
 [node name="EngineParticles" type="CPUParticles2D" parent="."]
 position = Vector2( 0, 25.9235 )
@@ -115,7 +110,7 @@ emitting = false
 amount = 16
 speed_scale = 5.54
 randomness = 0.53
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 emission_shape = 2
 emission_rect_extents = Vector2( 1, 5 )
 spread = 0.0
@@ -132,12 +127,17 @@ amount = 32
 lifetime = 10.0
 speed_scale = 2.0
 local_coords = false
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 emission_shape = 2
 emission_rect_extents = Vector2( 1, 1 )
 spread = 0.0
 gravity = Vector2( 0, 0 )
 scale_amount = 0.1
 
-[node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 3 )
+[node name="Graphic" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite" parent="Graphic"]
+texture = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )

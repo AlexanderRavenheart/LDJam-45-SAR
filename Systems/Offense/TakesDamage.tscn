@@ -3,9 +3,14 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
 
-func _doDamage(weapon: Node2D)->void:
-	var parent = get_parent()
+# This Node will apply damage to his parent
+var last_damage_direction := Vector2()
+
+func doDamage(weapon: Node2D)->void:
+	var parent = get_parent() as RigidBody2D
+	print(\"do damage: \", parent.current_hp, \", \", weapon.damage)
 	parent.current_hp -= weapon.damage
+	last_damage_direction = (weapon.global_position - parent.global_position).normalized()
 	if parent.current_hp <= 0:
 		# here do explosions
 		parent.queue_free()"

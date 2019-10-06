@@ -27,6 +27,7 @@ func shoot()->void:
 		bullet_instance.set_name(\"bullet\" + str(i))
 		bullet_instance.position = to_global($Position2D.position)
 		bullet_instance.rotation_degrees = global_rotation_degrees + (randi() % spread) - (spread/2)
+		bullet_instance.weapon = self;
 		$Bullets.add_child(bullet_instance)
 	can_shoot = false
 	$TimerCooldown.start()
