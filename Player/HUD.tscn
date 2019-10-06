@@ -61,6 +61,9 @@ func _on_time_elapsed(time_ms):
 func _on_progress_increased(value):
 	$ProgressContainer/LevelProgress.value = value
 
+func set_max_scrap_ammount(value):
+	$ProgressContainer/LevelProgress.max_value = value
+
 func _on_Player_armor_changed(value: int)->void:
 	$LabelArmor/Text.text = str(value)
 
