@@ -99,7 +99,13 @@ func _physics_process(delta):
 		self.current_hp += 10
 	elif Input.is_action_just_pressed(\"ui_down\"):
 		self.current_hp -= 10
-	
+
+func doDamage(weapon)->void:
+	current_hp -= weapon.damage
+	if current_hp <= 0:
+		print(\"GAME OVER\")
+		var reloaded = get_tree().reload_current_scene()
+
 func build_ship()->void:
 	$Graphic/Chassis.frame = randi() % 6
 	$Graphic/Body.frame = randi() % 6

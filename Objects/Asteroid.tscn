@@ -22,6 +22,7 @@ var scrap_resource = load(\"res://Objects/Scrap.tscn\")
 var current_hp := 20
 var iteration := 1
 var max_iterations := 3
+var damage: int = 15
 
 func _ready():
 	init_graphics()
@@ -54,6 +55,15 @@ func _integrate_forces(state):
 	
 	# limit the rotation speed
 	angular_velocity = clamp(angular_velocity, -5, 5)
+
+func _physics_process(delta):
+	var collisions = get_colliding_bodies()
+	var coll_numbers = collisions.size()
+	var player_collision = collisions.count(KinematicBody2D)
+	if coll_numbers > 0:
+		for col in collisions:
+			if col is KinematicBody2D:
+				col.doDamage(self)
 
 func _exit_tree():
 	if iteration == 1:
@@ -94,13 +104,12 @@ func _exit_tree():
 			asteroid.apply_central_impulse(local_damage_direction.rotated(deg2rad(dir * 90)) * 50 * 0.3/(iteration))
 			asteroid.position = new_pos
 			parent.add_child(asteroid)
-		
-		
 
 func init_graphics()->void:
 	var frames = $Sprite.texture.get_width() / 32
 	$Sprite.hframes = frames
-	$Sprite.frame = int(rand_range(0, frames))"
+	$Sprite.frame = int(rand_range(0, frames))
+"
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 12.6016
@@ -111,6 +120,7 @@ collision_mask = 7
 physics_material_override = SubResource( 1 )
 gravity_scale = 0.0
 continuous_cd = 2
+contacts_reported = 1
 contact_monitor = true
 sleeping = true
 linear_damp = 0.0

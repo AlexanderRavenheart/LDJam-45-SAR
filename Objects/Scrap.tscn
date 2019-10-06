@@ -8,13 +8,19 @@ script/source = "extends Area2D
 
 export (int) var scrap_value = 1
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	$Sprite.region_rect.position = Vector2( 10 * (randi() % 13), 0.0)
+var rotation_speed := 0.0
+var rotation_dir := 1
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _ready():
+	$Sprite.region_rect.position = Vector2( 10 * (randi() % 13), 0)
+	rotation_speed = rand_range(0.25, 0.5)
+	if (randi() % 100) < 50:
+		rotation_dir = -1
+	else:
+		rotation_dir = 1
+
+func _process(delta):
+	rotation_degrees += rotation_speed * rotation_dir
 
 func _on_Scrap_body_entered(body):
 	var root = get_tree().get_root().get_node(\"GameManager\") 
