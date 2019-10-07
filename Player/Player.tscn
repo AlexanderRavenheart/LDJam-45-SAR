@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=2]
@@ -21,9 +21,10 @@ signal shield_changed
 
 var current_hp = MAX_HP setget set_current_hp
 var current_shield = 0 setget set_current_shield
+var invulnerable :bool = true
 
 var TURN_SPEED:int = 360
-var MOVE_SPEED:int = 300
+var MOVE_SPEED:int = 250
 var ACCELERATION:float = 0.1
 var FRICTION:float = 0.01
 
@@ -49,6 +50,7 @@ func _ready():
 	#$Weapons/FlakCannon.queue_free()
 	
 	self.current_shield = (randi() % 100) + 1 
+	make_invulnerable()
 	
 func get_input(delta):
 	# direction
@@ -79,6 +81,12 @@ func set_current_shield(value: int)->void:
 	current_shield = max(value, 0)
 	emit_signal(\"shield_changed\", current_shield)
 
+func make_invulnerable()->void:
+	if $InvulnerabilityTimer.is_stopped():
+		invulnerable = true
+		$InvulnerabilityTimer.start()
+		$AnimationPlayer.play(\"flicker\")
+
 func _physics_process(delta):
 	get_input(delta)
 	var collision = move_and_collide(velocity * delta)
@@ -101,10 +109,9 @@ func _physics_process(delta):
 		self.current_hp -= 10
 
 func doDamage(weapon)->void:
-	current_hp -= weapon.damage
-	if current_hp <= 0:
-		current_hp = 0
-	emit_signal(\"armor_changed\", current_hp)
+	if not invulnerable:
+		self.current_hp = max(0, current_hp - weapon.damage)
+		make_invulnerable()
 
 func build_ship()->void:
 	$Graphic/Chassis.frame = randi() % 6
@@ -113,14 +120,59 @@ func build_ship()->void:
 	$Graphic/WingLeft.frame = randi() % 6
 	$Graphic/WingRight.frame = randi() % 6
 
+func _on_InvulnerabilityTimer_timeout():
+	$AnimationPlayer.stop()
+	$AnimationPlayer.seek(0, true)
+	invulnerable = false
 "
 
 [sub_resource type="Curve" id=2]
 _data = [ Vector2( 0, 0.4296 ), 0.0, 0.282769, 0, 0, Vector2( 1, 0.0159999 ), -0.393172, 0.0, 0, 0 ]
 
 [sub_resource type="CapsuleShape2D" id=3]
-radius = 28.7506
-height = 6.63346
+radius = 20.7745
+height = 2.99709
+
+[sub_resource type="Animation" id=4]
+resource_name = "flicker"
+length = 0.2
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Graphic:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 0.000270893, 3.09849e-006, 1 ),
+"update": 1,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.156863 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Weapons/FlakCannon:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1.719e-006, 3.438e-006, 1 ),
+"update": 1,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.156863 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Weapons:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.0896491, 0.1, 0.2 ),
+"transitions": PoolRealArray( 8.46536e-006, 1, 1.05817e-006, 1 ),
+"update": 1,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.470588 ), Color( 1, 1, 1, 0.156863 ), Color( 1, 1, 1, 1 ) ]
+}
 
 [node name="Player" type="KinematicBody2D"]
 scale = Vector2( 0.25, 0.25 )
@@ -199,5 +251,13 @@ texture = ExtResource( 8 )
 hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
+rotation = 1.5708
 shape = SubResource( 3 )
+
+[node name="InvulnerabilityTimer" type="Timer" parent="."]
+wait_time = 1.2
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/flicker = SubResource( 4 )
+[connection signal="timeout" from="InvulnerabilityTimer" to="." method="_on_InvulnerabilityTimer_timeout"]
