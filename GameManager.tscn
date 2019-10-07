@@ -122,10 +122,10 @@ func connect_player_signals():
 func _on_player_armor_changed(value):
 	if value <= 0:
 		# yield(player, \"player_destroyed\")
-		$Lose.visible = true
+		$Lose.set_visible(true)
 
 func _on_level_complete():
-	$Win.visible = true
+	$Win.set_visible(true)
 
 func increase_scrap_count(value):
 	scrap_count += value
