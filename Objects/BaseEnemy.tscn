@@ -10,7 +10,7 @@
 [ext_resource path="res://Assets/Ships/shipsTop.png" type="Texture" id=8]
 [ext_resource path="res://Assets/Ships/shipsWings.png" type="Texture" id=9]
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=1]
 script/source = "extends KinematicBody2D
 
 export (int, 1, 6, 1) var difficulty := 1 setget set_difficulty
@@ -56,6 +56,7 @@ func _physics_process(delta):
 	bump = Vector2()
 	
 	velocity = motion * MOVE_SPEED
+	velocity = velocity.clamped(MOVE_SPEED)
 	
 	# apply motion
 	position += velocity * delta
@@ -98,7 +99,7 @@ func _exit_tree():
 
 "
 
-[sub_resource type="CapsuleShape2D" id=1]
+[sub_resource type="CapsuleShape2D" id=2]
 radius = 29.9494
 height = 7.39378
 
@@ -106,7 +107,7 @@ height = 7.39378
 scale = Vector2( 0.5, 0.5 )
 collision_layer = 2
 collision_mask = 5
-script = SubResource( 2 )
+script = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -155,4 +156,4 @@ hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-shape = SubResource( 1 )
+shape = SubResource( 2 )
