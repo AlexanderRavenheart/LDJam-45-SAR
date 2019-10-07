@@ -1,0 +1,114 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Assets/Audio/cinematicIntro.wav" type="AudioStream" id=1]
+[ext_resource path="res://Assets/bg.png" type="Texture" id=2]
+[ext_resource path="res://Assets/cinematic/cinematicExp.png" type="Texture" id=3]
+[ext_resource path="res://ScreenShake.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var initial_scale = Vector2(2.12, 1.0)
+var final_scale = Vector2(0.0, 0.0)
+
+signal cinematic_done
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	$Timer.connect(\"timeout\", self, \"shake_pod\")
+	$Timer2.connect(\"timeout\", self, \"switch_to_frame3\")
+	$Timer3.connect(\"timeout\", self, \"zoom_out\")
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+func shake_pod():
+	$ScreenShake.queue_shake()
+	$ScreenShake.connect(\"shake_done\", self, \"switch_to_frame2\")
+
+func switch_to_frame2():
+	$Pod.frame = 1
+	$Timer2.start()
+	
+func switch_to_frame3():
+	$Pod.frame = 2
+	$Timer3.start()
+	
+func zoom_out():
+	$AnimationPlayer.play(\"zoom_out\")
+	$AnimationPlayer.connect(\"animation_finished\", self, \"cinematic_complete\")
+	
+func cinematic_complete(animation_name):
+	emit_signal(\"cinematic_done\")
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "zoom_out"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2.12, 1 ), Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 480, 270 ) ]
+}
+
+[node name="Cinematic" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 7.8
+one_shot = true
+autostart = true
+
+[node name="Timer2" type="Timer" parent="."]
+one_shot = true
+
+[node name="Timer3" type="Timer" parent="."]
+one_shot = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 1 )
+autoplay = true
+bus = "Music"
+
+[node name="Background" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="Pod" type="Sprite" parent="."]
+scale = Vector2( 2.12, 1 )
+texture = ExtResource( 3 )
+centered = false
+hframes = 3
+
+[node name="ScreenShake" parent="." instance=ExtResource( 4 )]
+shake_node = NodePath("../Pod")
+position_property = "position"
+shake_times = 5
+shake_strength = 20.0
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Pod")
+anims/zoom_out = SubResource( 2 )

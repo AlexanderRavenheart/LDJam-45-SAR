@@ -15,6 +15,7 @@ var level
 var player
 var hud
 var title = \"Void Drifter v0.1\"
+var level_format = \"res://Levels/Level%d.tscn\"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,20 +36,31 @@ func _process(delta):
 func _on_quit_game():
 	get_tree().quit()
 
-func _on_new_game():
-	print(\"Start new game\")
+func remove_menu():
 	# Remove main menu
 	var main_menu = get_node(\"MainMenu\")
 	remove_child(main_menu)
 	main_menu.call_deferred(\"free\")
-	
-	# Add the first level
-	var first_level_resource = load(\"res://Levels/Level1.tscn\")
-	level = first_level_resource.instance()
+
+func load_cinematic():
+	var cinematic_resource = load(\"res://Cinematic.tscn\")
+	level = cinematic_resource.instance()
 	add_child(level)
-	print(\"First Level Loaded\")
 	
-	# Spawn Player
+	level.connect(\"cinematic_done\", self, \"unload_cinematic\")
+
+func unload_cinematic():
+	remove_child(level)
+	level.call_deferred(\"free\")
+	load_level(1)	
+
+func load_level(level_nr):
+	# Load Level
+	var level_resource = load(level_format % level_nr)
+	level = level_resource.instance()
+	add_child(level)
+	
+	# Load Player
 	var player_resource = load(\"res://Player/Player.tscn\")
 	player = player_resource.instance()
 	player.position = start_position
@@ -65,6 +77,10 @@ func _on_new_game():
 	count_time = true
 	
 	connect_player_signals()
+
+func _on_new_game():
+	remove_menu()
+	load_cinematic()
 	
 func connect_player_signals():
 	player.connect(\"armor_changed\", hud, \"_on_Player_armor_changed\")
