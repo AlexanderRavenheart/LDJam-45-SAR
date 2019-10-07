@@ -24,6 +24,8 @@ var iteration := 1 setget set_iteration
 var max_iterations := 3
 var damage: int = 6
 
+var linear_vel := Vector2()
+
 func _ready():
 	init_graphics()
 	# random moving direction
@@ -64,7 +66,10 @@ func _physics_process(delta):
 		if coll_numbers > 0:
 			for col in collisions:
 				if col is KinematicBody2D:
-					col.doDamage(self)
+					var bump_dir = col.position - position
+					col.bump += bump_dir * linear_velocity
+					if col.player:
+						col.doDamage(self)
 
 func _exit_tree():
 	var parent = get_parent()
@@ -78,22 +83,21 @@ func _exit_tree():
 	print('explosion at: ', global_position)
 	parent.add_child(explosion)
 	
+	# Here we can spawn scrap
+	var chance = (randi() % 100) > 30
+	print('scrap roll: ', chance)
+	if chance:
+		var scrap = scrap_resource.instance() as Area2D
+		scrap.global_position = global_position
+		scrap.scrap_value = int(rand_range(1, 3))
+		parent.add_child(scrap)
+		
 	if iteration == 1:
 		var level = parent.get_parent()
 		if level:
 			level.number_of_asteroids -= 1
 		
 	if iteration < max_iterations:
-		
-		# Here we can spawn scrap
-		var chance = (randi() % 100) > 30
-		print('scrap roll: ', chance)
-		if chance:
-			var scrap = scrap_resource.instance() as Area2D
-			scrap.global_position = global_position
-			scrap.scrap_value = int(rand_range(1, 3))
-			parent.add_child(scrap)
-		
 		for i in range(2):
 			var direction_vector = Vector2(cos(rotation), sin(rotation))
 			var local_damage_direction = $TakesDamage.last_damage_direction + direction_vector
@@ -106,7 +110,7 @@ func _exit_tree():
 			asteroid.apply_central_impulse(local_damage_direction.rotated(deg2rad(dir * 90)) * 50 * 0.3/(iteration))
 			asteroid.position = new_pos
 			parent.add_child(asteroid)
-		
+
 
 func init_graphics()->void:
 	var frames = $Sprite.texture.get_width() / 32
