@@ -3,7 +3,7 @@
 [ext_resource path="res://Assets/bg.png" type="Texture" id=1]
 [ext_resource path="res://Assets/mainMenu/logo.png" type="Texture" id=2]
 [ext_resource path="res://Assets/mainMenu/btnPlay.png" type="Texture" id=3]
-[ext_resource path="res://Assets/mainMenu/btnOptions.png" type="Texture" id=4]
+[ext_resource path="res://Assets/mainMenu/btnCredits.png" type="Texture" id=4]
 [ext_resource path="res://Assets/mainMenu/btnExit.png" type="Texture" id=5]
 [ext_resource path="res://Player/PlayerCapsule.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Assets/Audio/master-disorder-by-kevin-macleod.ogg" type="AudioStream" id=7]
@@ -13,6 +13,7 @@ script/source = "extends Node
 
 signal quit_game
 signal new_game
+signal show_credits
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -30,7 +31,11 @@ func _on_NewGame_pressed():
 	emit_signal(\"new_game\")
 
 func _exit_tree():
-	$BackgroundMusic.stop()"
+	$BackgroundMusic.stop()
+
+func _on_Credits_pressed():
+	emit_signal(\"show_credits\")
+"
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 3 )
@@ -90,7 +95,6 @@ custom_constants/margin_left = 10
 custom_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-editor/display_folded = true
 margin_left = 386.0
 margin_top = 168.0
 margin_right = 574.0
@@ -126,7 +130,7 @@ texture_normal = SubResource( 2 )
 texture_pressed = SubResource( 3 )
 texture_hover = SubResource( 4 )
 
-[node name="Options" type="TextureButton" parent="MarginContainer/VBoxContainer/MenuOptions"]
+[node name="Credits" type="TextureButton" parent="MarginContainer/VBoxContainer/MenuOptions"]
 margin_top = 44.0
 margin_right = 64.0
 margin_bottom = 78.0
@@ -153,4 +157,5 @@ position = Vector2( 113.537, 233.386 )
 stream = ExtResource( 7 )
 bus = "Music"
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MenuOptions/NewGame" to="." method="_on_NewGame_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MenuOptions/Credits" to="." method="_on_Credits_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MenuOptions/Quit" to="." method="_on_Quit_pressed"]

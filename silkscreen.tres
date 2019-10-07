@@ -3,5 +3,7 @@
 [ext_resource path="res://Assets/silkscreen/slkscr.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 10
+size = 14
+use_mipmaps = true
+use_filter = true
 font_data = ExtResource( 1 )

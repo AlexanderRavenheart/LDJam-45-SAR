@@ -12,6 +12,7 @@ var initial_scale = Vector2(2.12, 1.0)
 var final_scale = Vector2(0.0, 0.0)
 
 signal cinematic_done
+signal spawn_ship
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,12 +21,14 @@ func _ready():
 	$Timer3.connect(\"timeout\", self, \"zoom_out\")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	if Input.is_action_pressed(\"ui_accept\"):
+		emit_signal(\"cinematic_done\")
 
 func shake_pod():
 	$ScreenShake.queue_shake()
-	$ScreenShake.connect(\"shake_done\", self, \"switch_to_frame2\")
+	switch_to_frame2()
+	# $ScreenShake.connect(\"shake_done\", self, \"switch_to_frame2\")
 
 func switch_to_frame2():
 	$Pod.frame = 1
@@ -36,16 +39,18 @@ func switch_to_frame3():
 	$Timer3.start()
 	
 func zoom_out():
+	emit_signal(\"spawn_ship\")
 	$AnimationPlayer.play(\"zoom_out\")
 	$AnimationPlayer.connect(\"animation_finished\", self, \"cinematic_complete\")
 	
 func cinematic_complete(animation_name):
+	print(\"Cinematic done\")
 	emit_signal(\"cinematic_done\")
 "
 
 [sub_resource type="Animation" id=2]
 resource_name = "zoom_out"
-length = 2.0
+length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1

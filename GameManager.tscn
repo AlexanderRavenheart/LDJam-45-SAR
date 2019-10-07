@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Main Menu.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Assets/Audio/movement-proposition-by-kevin-macleod.ogg" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -16,6 +17,8 @@ var player
 var hud
 var title = \"Void Drifter v0.1\"
 var level_format = \"res://Levels/Level%d.tscn\"
+var credits
+var menu
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,8 +26,10 @@ func _ready():
 	time_elapsed = 0
 	count_time = false
 	start_position = get_viewport().get_visible_rect().size / 2
+	menu = $MainMenu
 	$MainMenu.connect(\"quit_game\", self, \"_on_quit_game\")
 	$MainMenu.connect(\"new_game\", self, \"_on_new_game\")
+	$MainMenu.connect(\"show_credits\", self, \"_on_show_credits\")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -33,20 +38,38 @@ func _process(delta):
 	if count_time:
 		$HUD._on_time_elapsed( OS.get_ticks_msec() - start_time)
 
+func _on_show_credits():
+	remove_menu()
+	var credits_resource = load(\"res://Credits.tscn\")
+	credits = credits_resource.instance()
+	add_child(credits)
+	credits.connect(\"show_menu\", self, \"_on_show_menu\")
+
+func _on_show_menu():
+	remove_child(credits)
+	credits.call_deferred(\"free\")
+	load_menu()
+
 func _on_quit_game():
 	get_tree().quit()
 
+func load_menu():
+	var menu_resource = load(\"res://Main Menu.tscn\")
+	menu = menu_resource.instance()
+	add_child(menu)
+	menu.connect(\"quit_game\", self, \"_on_quit_game\")
+	menu.connect(\"new_game\", self, \"_on_new_game\")
+	menu.connect(\"show_credits\", self, \"_on_show_credits\")
+
 func remove_menu():
 	# Remove main menu
-	var main_menu = get_node(\"MainMenu\")
-	remove_child(main_menu)
-	main_menu.call_deferred(\"free\")
+	remove_child(menu)
+	menu.call_deferred(\"free\")
 
 func load_cinematic():
 	var cinematic_resource = load(\"res://Cinematic.tscn\")
 	level = cinematic_resource.instance()
 	add_child(level)
-	
 	level.connect(\"cinematic_done\", self, \"unload_cinematic\")
 
 func unload_cinematic():
@@ -54,19 +77,15 @@ func unload_cinematic():
 	level.call_deferred(\"free\")
 	load_level(1)	
 
-func load_level(level_nr):
-	# Load Level
-	var level_resource = load(level_format % level_nr)
-	level = level_resource.instance()
-	add_child(level)
-	
+func load_player():
 	# Load Player
 	var player_resource = load(\"res://Player/Player.tscn\")
 	player = player_resource.instance()
 	player.position = start_position
 	add_child(player)
 	print(\"Player Loaded\")
-	
+
+func load_hud():
 	# Load HUD
 	var hud_resource = load(\"res://Player/HUD.tscn\")
 	hud = hud_resource.instance()
@@ -75,8 +94,19 @@ func load_level(level_nr):
 	print(\"HUD Loaded\")
 	start_time = OS.get_ticks_msec()
 	count_time = true
+
+func load_level(level_nr):
+	print(\"Load level %d\" % level_nr)
+	# Load Level
+	var level_resource = load(level_format % level_nr)
+	level = level_resource.instance()
+	add_child(level)
+	
+	load_player()
+	load_hud()
 	
 	connect_player_signals()
+	$InGameMusic.play()
 
 func _on_new_game():
 	remove_menu()
@@ -108,3 +138,7 @@ func check_if_level_is_complete():
 script = SubResource( 1 )
 
 [node name="MainMenu" parent="." instance=ExtResource( 1 )]
+
+[node name="InGameMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+bus = "Music"

@@ -49,4 +49,5 @@ region_rect = Rect2( 0, 0, 10, 10 )
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 2 )
+bus = "Sound Effects"
 [connection signal="body_entered" from="." to="." method="_on_Scrap_body_entered"]
