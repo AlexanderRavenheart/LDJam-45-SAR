@@ -1,0 +1,63 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var shake_left
+var shake_right
+var shake_duration = 0.05
+var shake_count = 0
+var restore_to_normal
+var position_normal = Vector2(0.0, 0.0)
+var position_left = Vector2(-10.0, 0.0)
+var position_right = Vector2(10.0, 0.0)
+
+export(NodePath) onready var shake_node = get_node(shake_node)
+export(int) var shake_times = 1
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	shake_left = $ShakeLeft
+	shake_right = $ShakeRight
+	restore_to_normal = $RestoreToNormal
+	$Timer.connect(\"timeout\", self, \"apply_shake\")
+
+func prepare_shake():
+	shake_left.interpolate_property(shake_node, \"rect_position\", position_normal, position_left, shake_duration, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	shake_right.interpolate_property(shake_node, \"rect_position\", position_left, position_right, shake_duration, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	restore_to_normal.interpolate_property(shake_node, \"rect_position\", position_right, position_normal, shake_duration, Tween.TRANS_LINEAR, Tween.EASE_IN)
+
+func reset_shake():
+	shake_left.reset(shake_node)
+
+func queue_shake():
+	$Timer.start()
+
+func do_shake():
+	shake_left.start()
+	yield(shake_left, \"tween_completed\")
+	shake_right.start()
+	yield(shake_right, \"tween_completed\")
+	restore_to_normal.start()
+	yield(restore_to_normal, \"tween_completed\")
+
+func apply_shake():
+	shake_count += 1
+	if shake_count >= shake_times:
+		$Timer.stop()
+	prepare_shake()
+	do_shake()
+	reset_shake()
+"
+
+[node name="Node" type="Node"]
+script = SubResource( 1 )
+
+[node name="ShakeLeft" type="Tween" parent="."]
+
+[node name="ShakeRight" type="Tween" parent="."]
+
+[node name="RestoreToNormal" type="Tween" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
