@@ -23,12 +23,20 @@ config/icon="res://icon.png"
 
 global="*res://Systems/global.gd"
 
+[debug]
+
+settings/stdout/print_fps=true
+
 [display]
 
-window/size/width=480
-window/size/height=270
+window/size/width=960
+window/size/height=540
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"
+
+[gui]
+
+theme/custom_font="res://silkscreen.tres"
 
 [importer_defaults]
 
@@ -104,8 +112,13 @@ ui_reset={
 [layer_names]
 
 2d_render/layer_1="Player"
+2d_physics/layer_1="Player"
 2d_render/layer_2="Enemies"
+2d_physics/layer_2="Enemies"
 2d_render/layer_3="Objects"
+2d_physics/layer_3="Objects"
+2d_render/layer_4="Scrap"
+2d_physics/layer_4="Scrap"
 
 [rendering]
 
