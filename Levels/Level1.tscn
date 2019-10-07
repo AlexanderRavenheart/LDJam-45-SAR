@@ -70,6 +70,7 @@ func _on_SpawnTimerAsteroid_timeout():
 script = SubResource( 1 )
 
 [node name="Background" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
 texture = ExtResource( 1 )
 centered = false
 

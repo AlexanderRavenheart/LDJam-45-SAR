@@ -82,7 +82,7 @@ func increase_scrap_count(value):
 	check_if_level_is_complete()
 	
 func check_if_level_is_complete():
-	if scrap_count >= $Level.max_scrap_count:
+	if scrap_count >= $Level.scrap_amount:
 		_on_level_complete()"
 
 [node name="GameManager" type="Node"]
