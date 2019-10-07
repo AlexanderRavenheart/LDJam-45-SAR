@@ -14,6 +14,7 @@ var start_position : Vector2
 var level
 var player
 var hud
+var title = \"Void Drifter v0.1\"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,6 +27,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	if OS.is_debug_build():
+		OS.set_window_title(title + \" | fps: \" + str(Engine.get_frames_per_second()))
 	if count_time:
 		$HUD._on_time_elapsed( OS.get_ticks_msec() - start_time)
 
