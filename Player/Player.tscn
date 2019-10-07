@@ -15,6 +15,7 @@ script/source = "extends KinematicBody2D
 export (int, 10, 100, 10) var MAX_HP: int = 100
 export (int, 10, 100, 10) var POWER: int = 50
 export (int, 10, 100, 10) var MOBILITY: int = 50
+export (PackedScene) var explosion_res := load(\"res://Objects/Explosion.tscn\")
 
 signal armor_changed
 signal shield_changed
@@ -80,6 +81,15 @@ func get_input(delta):
 func set_current_hp(value: int)->void:
 	current_hp = max(value, 0)
 	emit_signal(\"armor_changed\", current_hp)
+	if current_hp <= 0:
+		# spawn explosion
+		var explosion = explosion_res.instance() as Node2D
+		explosion.global_position = global_position
+		var part = explosion.get_node(\"Particles\") as CPUParticles2D
+		part.amount = 8
+		part.scale_amount = 1
+		get_parent().add_child(explosion)
+		queue_free()
 
 func set_current_shield(value: int)->void:
 	current_shield = max(value, 0)
