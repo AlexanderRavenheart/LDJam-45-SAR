@@ -24,7 +24,7 @@ var iteration := 1 setget set_iteration
 var max_iterations := 3
 var damage: int = 6
 
-var linear_vel := Vector2()
+var player := false
 
 func _ready():
 	init_graphics()
@@ -66,8 +66,8 @@ func _physics_process(delta):
 		if coll_numbers > 0:
 			for col in collisions:
 				if col is KinematicBody2D:
-					var bump_dir = col.position - position
-					col.bump += bump_dir * linear_velocity
+					var bump_dir = (col.position - position).normalized() * linear_velocity.length()
+					col.bump = bump_dir * 0.005
 					if col.player:
 						col.doDamage(self)
 

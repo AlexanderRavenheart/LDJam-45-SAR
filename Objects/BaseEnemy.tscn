@@ -1,12 +1,14 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
-[ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Systems/Offense/TakesDamage.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/Particles/glow.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Ships/shipsBase.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Ships/shipsMid.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Ships/shipsTop.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Ships/shipsWings.png" type="Texture" id=7]
+[ext_resource path="res://Objects/Explosion.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Systems/LevelWarp.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Systems/Offense/TakesDamage.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Systems/Offense/PulseLaser/PulseLaser.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/Particles/glow.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Ships/shipsBase.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Ships/shipsMid.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Ships/shipsTop.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Ships/shipsWings.png" type="Texture" id=9]
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends KinematicBody2D
@@ -46,13 +48,19 @@ func _ready()->void:
 	move_direction = Vector2( rand_range(-1, 1), rand_range(-1, 1) )
 	rotation = move_direction.rotated(deg2rad(90)).angle()
 
-func _process(delta):
+func _physics_process(delta):
 	motion = motion.linear_interpolate(move_direction, ACCELERATION)
-	#velocity = (bump + motion) * MOVE_SPEED
+	
+	#apply the bump if we got hit
+	motion += bump
+	bump = Vector2()
+	
 	velocity = motion * MOVE_SPEED
 	
 	# apply motion
-	position += motion * MOVE_SPEED * delta
+	position += velocity * delta
+	
+	
 
 func set_difficulty(value: int)->void:
 	difficulty = value
@@ -102,43 +110,47 @@ script = SubResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }
+explosion_resource = ExtResource( 1 )
 
-[node name="LevelWarp" parent="." instance=ExtResource( 1 )]
+[node name="LevelWarp" parent="." instance=ExtResource( 2 )]
 
-[node name="TakesDamage" parent="." instance=ExtResource( 2 )]
+[node name="TakesDamage" parent="." instance=ExtResource( 3 )]
 
 [node name="Weapon" type="Node2D" parent="."]
+
+[node name="PulseLaser" parent="Weapon" instance=ExtResource( 4 )]
+position = Vector2( 0.0580177, -29.5935 )
 
 [node name="Graphic" type="Node2D" parent="."]
 
 [node name="Glow" type="Sprite" parent="Graphic"]
 self_modulate = Color( 0.74902, 0.137255, 0.137255, 0.454902 )
 scale = Vector2( 2, 2 )
-texture = ExtResource( 3 )
+texture = ExtResource( 5 )
 
 [node name="Chassis" type="Sprite" parent="Graphic"]
-texture = ExtResource( 4 )
+texture = ExtResource( 6 )
 hframes = 6
 
 [node name="Body" type="Sprite" parent="Graphic"]
 position = Vector2( 0, 7 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 hframes = 6
 
 [node name="Top" type="Sprite" parent="Graphic"]
 position = Vector2( 0, -19.207 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 hframes = 6
 
 [node name="WingLeft" type="Sprite" parent="Graphic"]
 position = Vector2( -23.9255, 3.92229 )
-texture = ExtResource( 7 )
+texture = ExtResource( 9 )
 hframes = 6
 
 [node name="WingRight" type="Sprite" parent="Graphic"]
 position = Vector2( 24.3656, 3.92229 )
 scale = Vector2( -1, 1 )
-texture = ExtResource( 7 )
+texture = ExtResource( 9 )
 hframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -59,8 +59,12 @@ func get_input(delta):
 		rotation_degrees -= TURN_SPEED * delta
 	if Input.is_action_pressed(\"rotate_right\"):
 		rotation_degrees += TURN_SPEED * delta
-		
+	
 	var move_direction = Vector2(0, -1).rotated(rotation)
+	
+	#apply the bump if we got hit
+	motion += bump
+	bump = Vector2()
 	
 	# acceleration
 	if Input.is_action_pressed(\"accelerate\"):
@@ -71,8 +75,6 @@ func get_input(delta):
 		
 	# \"friction\"
 	# motion = motion.linear_interpolate(Vector2(), FRICTION)
-	
-	#velocity = (bump + motion) * MOVE_SPEED
 	velocity = motion * MOVE_SPEED
 
 func set_current_hp(value: int)->void:
@@ -101,9 +103,6 @@ func _physics_process(delta):
 				velocity = velocity.bounce(collision.normal)
 				print(velocity)
 				move_and_slide(velocity * delta)
-	
-	# apply motion
-	# position += motion * MOVE_SPEED * delta
 
 func doDamage(weapon)->void:
 	if not invulnerable:
