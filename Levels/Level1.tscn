@@ -5,13 +5,16 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
-var asteroid_res = load(\"res://Objects/Asteroid.tscn\")
+onready var asteroid_res = load(\"res://Objects/Asteroid.tscn\")
+onready var enemy_res = load(\"res://Objects/BaseEnemy.tscn\")
 
 export (int) var level: int = 1
 export (int) var max_enemies: int = 2
 export (int) var max_asteroids: int = 5
 export (int) var scrap_amount: int = 20
 export (int) var spawn_cooldown: float = 3
+export (int, 1, 6, 1) var min_enemy_difficulty := 1
+export (int, 0, 6, 1) var max_enemy_difficulty := 5
 
 var number_of_asteroids := 0
 var number_of_enemies := 0
@@ -53,13 +56,30 @@ func spawn_asteroid()->void:
 	asteroid.position = Vector2(x, y)
 	$Entities.add_child(asteroid)
 
-func spawn_enemy()->void:
+func spawn_enemy(min_difficulty := 1, max_difficulty := 0)->void:
 	number_of_enemies += 1
 	print(\"Spawn enemy \")
+	var enemy = enemy_res.instance() as KinematicBody2D
+	if max_difficulty > 0:
+		enemy.difficulty = rand_range(min_difficulty, max_difficulty+1)
+	else:
+		enemy.difficulty = min_difficulty
+	var x: float
+	if (randi() % 10) < 5:
+		x = -35
+	else:
+		x = level_size.x
+	var y: float
+	if (randi() % 10) < 5:
+		y = -35
+	else:
+		y = level_size.y
+	enemy.position = Vector2(x, y)
+	$Entities.add_child(enemy)
 
 func _on_SpawnTimerEnemy_timeout():
 	if number_of_enemies < max_enemies:
-		spawn_enemy()
+		spawn_enemy(min_enemy_difficulty, max_enemy_difficulty)
 
 func _on_SpawnTimerAsteroid_timeout():
 	if number_of_asteroids < max_asteroids:

@@ -13,7 +13,7 @@ func setSpawnInvulnerabilityTimer(value: float)->void:
 
 func doDamage(weapon: Node2D)->void:
 	if not invulnerable:
-		var parent = get_parent() as RigidBody2D
+		var parent = get_parent()
 		parent.current_hp -= weapon.damage
 		last_damage_direction = (weapon.global_position - parent.global_position).normalized()
 		if parent.current_hp <= 0:

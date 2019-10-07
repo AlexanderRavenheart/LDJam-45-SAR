@@ -19,6 +19,8 @@ export (int, 10, 100, 10) var MOBILITY: int = 50
 signal armor_changed
 signal shield_changed
 
+var player := true
+
 var current_hp = MAX_HP setget set_current_hp
 var current_shield = 0 setget set_current_shield
 var invulnerable :bool = true
@@ -28,10 +30,9 @@ var MOVE_SPEED:int = 250
 var ACCELERATION:float = 0.1
 var FRICTION:float = 0.01
 
-var speed = 750
-var velocity = Vector2()
-
-var motion = Vector2()
+var velocity := Vector2()
+var bump := Vector2()
+var motion := Vector2()
 
 var screen_size
 var warp_buffer = 32
@@ -71,6 +72,7 @@ func get_input(delta):
 	# \"friction\"
 	# motion = motion.linear_interpolate(Vector2(), FRICTION)
 	
+	#velocity = (bump + motion) * MOVE_SPEED
 	velocity = motion * MOVE_SPEED
 
 func set_current_hp(value: int)->void:
@@ -102,11 +104,6 @@ func _physics_process(delta):
 	
 	# apply motion
 	# position += motion * MOVE_SPEED * delta
-		
-	if Input.is_action_just_pressed(\"ui_up\"):
-		self.current_hp += 10
-	elif Input.is_action_just_pressed(\"ui_down\"):
-		self.current_hp -= 10
 
 func doDamage(weapon)->void:
 	if not invulnerable:
@@ -175,13 +172,14 @@ tracks/2/keys = {
 }
 
 [node name="Player" type="KinematicBody2D"]
-scale = Vector2( 0.25, 0.25 )
+scale = Vector2( 0.5, 0.5 )
 collision_mask = 7
 script = SubResource( 1 )
 
 [node name="LevelWarp" parent="." instance=ExtResource( 1 )]
 
 [node name="Weapons" type="Node2D" parent="."]
+editor/display_folded = true
 position = Vector2( 0, -35 )
 
 [node name="FlakCannon" parent="Weapons" instance=ExtResource( 2 )]
@@ -224,6 +222,7 @@ gravity = Vector2( 0, 0 )
 scale_amount = 0.1
 
 [node name="Graphic" type="Node2D" parent="."]
+editor/display_folded = true
 
 [node name="Chassis" type="Sprite" parent="Graphic"]
 texture = ExtResource( 5 )
