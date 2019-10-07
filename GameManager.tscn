@@ -129,11 +129,11 @@ func _on_level_complete():
 
 func increase_scrap_count(value):
 	scrap_count += value
-	$HUD._on_progress_increased(scrap_count)
+	hud._on_progress_increased(scrap_count)
 	check_if_level_is_complete()
 	
 func check_if_level_is_complete():
-	if scrap_count >= $Level.scrap_amount:
+	if scrap_count >= level.scrap_amount:
 		_on_level_complete()"
 
 [node name="GameManager" type="Node"]
