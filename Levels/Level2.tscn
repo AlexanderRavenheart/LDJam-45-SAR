@@ -11,7 +11,7 @@ onready var enemy_res = load(\"res://Objects/BaseEnemy.tscn\")
 export (int) var level: int = 1
 export (int) var max_enemies: int = 3
 export (int) var max_asteroids: int = 3
-export (int) var scrap_amount: int = 15
+export (int) var scrap_amount: int = 25
 export (int) var spawn_cooldown: float = 3
 export (int, 1, 6, 1) var min_enemy_difficulty := 1
 export (int, 0, 6, 1) var max_enemy_difficulty := 2
@@ -66,12 +66,12 @@ func spawn_enemy(min_difficulty := 1, max_difficulty := 0)->void:
 		enemy.difficulty = min_difficulty
 	var x: float
 	if (randi() % 10) < 5:
-		x = -35
+		x = -70
 	else:
 		x = level_size.x
 	var y: float
 	if (randi() % 10) < 5:
-		y = -35
+		y = -70
 	else:
 		y = level_size.y
 	enemy.position = Vector2(x, y)
