@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Main Menu.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/Audio/movement-proposition-by-kevin-macleod.ogg" type="AudioStream" id=2]
+[ext_resource path="res://Assets/winVictory.png" type="Texture" id=3]
+[ext_resource path="res://Assets/loseGameOver.png" type="Texture" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -75,7 +77,7 @@ func load_cinematic():
 func unload_cinematic():
 	remove_child(level)
 	level.call_deferred(\"free\")
-	load_level(1)	
+	load_level(2)	
 
 func load_player():
 	# Load Player
@@ -120,10 +122,10 @@ func connect_player_signals():
 func _on_player_armor_changed(value):
 	if value <= 0:
 		# yield(player, \"player_destroyed\")
-		print(\"Game Over\")
+		$Lose.visible = true
 
 func _on_level_complete():
-	print(\"Level Complete\")
+	$Win.visible = true
 
 func increase_scrap_count(value):
 	scrap_count += value
@@ -142,3 +144,13 @@ script = SubResource( 1 )
 [node name="InGameMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 2 )
 bus = "Music"
+
+[node name="Win" type="Sprite" parent="."]
+visible = false
+position = Vector2( 480, 100 )
+texture = ExtResource( 3 )
+
+[node name="Lose" type="Sprite" parent="."]
+visible = false
+position = Vector2( 480, 100 )
+texture = ExtResource( 4 )
