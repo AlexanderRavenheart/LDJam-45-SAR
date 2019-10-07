@@ -9,12 +9,12 @@ onready var asteroid_res = load(\"res://Objects/Asteroid.tscn\")
 onready var enemy_res = load(\"res://Objects/BaseEnemy.tscn\")
 
 export (int) var level: int = 1
-export (int) var max_enemies: int = 0
-export (int) var max_asteroids: int = 5
+export (int) var max_enemies: int = 3
+export (int) var max_asteroids: int = 3
 export (int) var scrap_amount: int = 15
 export (int) var spawn_cooldown: float = 3
 export (int, 1, 6, 1) var min_enemy_difficulty := 1
-export (int, 0, 6, 1) var max_enemy_difficulty := 3
+export (int, 0, 6, 1) var max_enemy_difficulty := 2
 
 var number_of_asteroids := 0
 var number_of_enemies := 0
