@@ -9,7 +9,7 @@ script/source = "extends RayCast2D
 export (float) var beam_speed = 800
 export (float) var beam_max_length = 200
 
-export (int) var damage = 5
+export (int) var damage = 10
 
 func _ready():
 	visible = false
@@ -56,7 +56,7 @@ resource_name = "shooting"
 length = 0.9
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("MuzzleGlow:scale")
+tracks/0/path = NodePath("Weapon/MuzzleGlow:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false

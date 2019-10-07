@@ -20,9 +20,9 @@ var asteroid_explosion = load(\"res://Objects/AsteroidExposion.tscn\")
 var scrap_resource = load(\"res://Objects/Scrap.tscn\")
 
 var current_hp := 20
-var iteration := 1
+var iteration := 1 setget set_iteration
 var max_iterations := 3
-var damage: int = 15
+var damage: int = 6
 
 func _ready():
 	init_graphics()
@@ -109,7 +109,10 @@ func init_graphics()->void:
 	var frames = $Sprite.texture.get_width() / 32
 	$Sprite.hframes = frames
 	$Sprite.frame = int(rand_range(0, frames))
-"
+
+func set_iteration(value: int)->void:
+	iteration = value
+	damage = 6 / iteration"
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 12.6016
