@@ -148,9 +148,11 @@ bus = "Music"
 [node name="Win" type="Sprite" parent="."]
 visible = false
 position = Vector2( 480, 100 )
+z_index = 100
 texture = ExtResource( 3 )
 
 [node name="Lose" type="Sprite" parent="."]
 visible = false
 position = Vector2( 480, 100 )
+z_index = 100
 texture = ExtResource( 4 )
