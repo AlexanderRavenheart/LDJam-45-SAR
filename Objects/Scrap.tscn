@@ -32,7 +32,7 @@ func _on_Scrap_body_entered(body):
 "
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 4.5, 4.5 )
+extents = Vector2( 8.08179, 8.34632 )
 
 [node name="Scrap" type="Area2D"]
 gravity = 0.0

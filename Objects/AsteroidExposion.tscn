@@ -2,22 +2,40 @@
 
 [ext_resource path="res://Assets/Objects/asteroid1.png" type="Texture" id=1]
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
+func _ready():
+	# choose a random explosion sound
+	var explosion_sounds = [
+		\"res://Assets/Audio/asteroidexplosion1.wav\",
+		\"res://Assets/Audio/asteroidexplosion2.wav\",
+		\"res://Assets/Audio/asteroidexplosion3.wav\"
+	]
+	var explosion_sound_res = load(explosion_sounds[int(rand_range(0,3))])
+	$ExplosionSound.stream = explosion_sound_res
+	
+	# Play explosion sound
+	$ExplosionSound.play()
+
 func _on_Timer_timeout():
+	yield($ExplosionSound, \"finished\")
+	queue_free()
+
+func _on_ExplosionSound_finished():
+	yield($Timer, \"timeout\")
 	queue_free()
 "
 
-[sub_resource type="Curve" id=1]
+[sub_resource type="Curve" id=2]
 max_value = 100.0
 _data = [ Vector2( 0, 100 ), 0.0, 0.0, 0, 0, Vector2( 0.803213, 67.16 ), -113.478, -113.478, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Curve" id=2]
+[sub_resource type="Curve" id=3]
 _data = [ Vector2( 0, 1 ), 0.0, -0.162961, 0, 0, Vector2( 1, 0 ), -0.164087, 0.0, 0, 0 ]
 
 [node name="AsteroidExposion" type="Node2D"]
-script = SubResource( 3 )
+script = SubResource( 1 )
 
 [node name="Particles" type="CPUParticles2D" parent="."]
 lifetime = 1.37
@@ -30,12 +48,16 @@ initial_velocity_random = 0.14
 angular_velocity = 186.47
 angular_velocity_random = 0.29
 damping = 100.0
-damping_curve = SubResource( 1 )
+damping_curve = SubResource( 2 )
 scale_amount = 0.5
-scale_amount_curve = SubResource( 2 )
+scale_amount_curve = SubResource( 3 )
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 1.37
 one_shot = true
 autostart = true
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+bus = "Sound Effects"
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="finished" from="ExplosionSound" to="." method="_on_ExplosionSound_finished"]
