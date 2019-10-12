@@ -9,26 +9,17 @@ script/source = "extends BaseWeapon
 class_name FlakCannon
 
 export (int, 20, 160, 5) var spread: int = 30
-var bullet = load(\"res://Systems/Offense/FlakCannon/FlakCannonBullet.tscn\")
-
-func _init_variables():
-	damage = 10
-	can_shoot = true
-	cooldown = 0.8
-
+var bullet = preload(\"res://Systems/Offense/FlakCannon/FlakCannonBullet.tscn\")
 
 func _shoot()->void:
-	can_shoot = false
 	$WeaponShootSound.pitch_scale = rand_range(0.8, 1.2)
 	$WeaponShootSound.play()
 	for i in range(15):
 		var bullet_instance: Area2D = bullet.instance()
-		bullet_instance.set_name(\"bullet\" + str(i))
 		bullet_instance.position = to_global($WeaponShootPoint.position)
 		bullet_instance.rotation_degrees = global_rotation_degrees + (randi() % spread) - (spread/2)
 		bullet_instance.weapon = self;
 		$Bullets.add_child(bullet_instance)
-	$WeaponShootCooldown.start()
 "
 
 [node name="FlakCannon" type="Node2D"]
@@ -37,8 +28,9 @@ __meta__ = {
 "_edit_group_": true
 }
 weapon_type = 1
+weapon_level = 1
 cooldown = 0.5
-damage = 10
+base_damage = 6
 damage_type = 1
 weapon_sprite = ExtResource( 1 )
 weapon_shoot_point = Vector2( 0, -8 )

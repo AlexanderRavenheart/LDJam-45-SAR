@@ -40,10 +40,6 @@ config/icon="res://Assets/mainMenu/logo.png"
 
 global="*res://Systems/global.gd"
 
-[debug]
-
-settings/stdout/print_fps=true
-
 [display]
 
 window/size/width=960

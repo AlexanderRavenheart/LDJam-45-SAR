@@ -3,8 +3,10 @@ extends Node2D
 class_name BaseWeapon
 
 export (int) var weapon_type: int
+export (int) var weapon_level: int
 export (float) var cooldown: float
-export (int) var damage: int
+var damage: int
+export (int) var base_damage: int
 export (int) var damage_type: int
 
 export (Texture) var weapon_sprite: Texture
@@ -22,12 +24,15 @@ func _ready():
 	_init_variables()
 	_init_nodes()
 
-func _process(delta):
-	if Input.is_action_pressed("shoot") and can_shoot:
-		_shoot()
+func _unhandled_input(event):
+	if event.is_action_pressed("shoot") and can_shoot:
+		_start_shooting()
+	if event.is_action_released("shoot"):
+		_stop_shooting()
 
 func _init_variables()->void:
-	pass
+	can_shoot = true
+	damage = base_damage * weapon_level
 	
 func _init_nodes()->void:
 	WeaponSprite.set_texture(weapon_sprite)
@@ -48,6 +53,13 @@ func _init_nodes()->void:
 
 func _shoot()->void:
 	pass
+
+func _start_shooting()->void:
+	_shoot()
+	$WeaponShootCooldown.start()
+
+func _stop_shooting()->void:
+	$WeaponShootCooldown.stop()
 	
 func _on_weapon_shoot_cooldown_timeout()->void:
-	can_shoot = true
+	_shoot()

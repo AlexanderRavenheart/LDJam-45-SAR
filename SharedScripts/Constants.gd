@@ -3,7 +3,7 @@ extends Node
 class_name Constants
 
 enum Weapons {
-	BurstLaser,
+	PulseLaser,
 	LaserBeam,
 	DumbMissiles,
 	HomingMissiles,
@@ -14,8 +14,8 @@ enum Weapons {
 
 static func get_weapon_scene(weapon_class_index):
 	var WeaponClassMapping = {
-		#0: BurstLaser,
-		#1: get_class(LaserBeam),
+		0: "res://Systems/Offense/PulseLaser/PulseLaser.tscn",
+		1: "res://Systems/Offense/LaserBeam.tscn",
 		#2: DumbMissiles,
 		#3: HomingMissiles,
 		#4: Mines,
