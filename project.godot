@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Area2D",
+"class": "BaseBullet",
+"language": "GDScript",
+"path": "res://Systems/Offense/BaseBullet.gd"
+}, {
 "base": "Node2D",
 "class": "BaseEnemy",
 "language": "GDScript",
@@ -25,6 +30,7 @@ _global_script_classes=[ {
 "path": "res://SharedScripts/Constants.gd"
 } ]
 _global_script_class_icons={
+"BaseBullet": "",
 "BaseEnemy": "",
 "BaseWeapon": "",
 "Constants": ""
