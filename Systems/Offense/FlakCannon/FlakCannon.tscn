@@ -1,43 +1,33 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Assets/Systems/systems_spread.png" type="Texture" id=1]
-[ext_resource path="res://Assets/Audio/laserShot1.wav" type="AudioStream" id=2]
+[ext_resource path="res://Assets/Audio/laserShot2.wav" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends Node2D
+script/source = "extends \"res://Systems/Offense/BaseWeapon.gd\"
 
-export (int) var damage: int = 10
 export (int, 20, 160, 5) var spread: int = 30
-export (float) var cooldown: float = 0.8
-
 var bullet = load(\"res://Systems/Offense/FlakCannon/FlakCannonBullet.tscn\")
 
-var can_shoot: bool = true
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	$TimerCooldown.set_wait_time(cooldown)
+func _init_variables():
+	damage = 10
+	can_shoot = true
+	cooldown = 0.8
 
-func _process(delta):
-	if Input.is_action_pressed(\"shoot\") and can_shoot:
-		shoot()
 
-func shoot()->void:
-	$ShootSound.pitch_scale = rand_range(0.8, 1.2)
-	$ShootSound.play()
+func _shoot()->void:
+	can_shoot = false
+	$WeaponShootSound.pitch_scale = rand_range(0.8, 1.2)
+	$WeaponShootSound.play()
 	for i in range(15):
 		var bullet_instance: Area2D = bullet.instance()
 		bullet_instance.set_name(\"bullet\" + str(i))
-		bullet_instance.position = to_global($Position2D.position)
+		bullet_instance.position = to_global($WeaponShootPoint.position)
 		bullet_instance.rotation_degrees = global_rotation_degrees + (randi() % spread) - (spread/2)
 		bullet_instance.weapon = self;
 		$Bullets.add_child(bullet_instance)
-	can_shoot = false
-	$TimerCooldown.start()
-	
-
-func _on_TimerCooldown_timeout():
-	can_shoot = true;
+	$WeaponShootCooldown.start()
 "
 
 [node name="FlakCannon" type="Node2D"]
@@ -45,20 +35,12 @@ script = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
-
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0, -8 )
-texture = ExtResource( 1 )
-
-[node name="Position2D" type="Position2D" parent="."]
-position = Vector2( 0, -16 )
-
-[node name="TimerCooldown" type="Timer" parent="."]
-one_shot = true
+weapon_type = 1
+cooldown = 0.5
+damage = 10
+damage_type = 1
+weapon_sprite = ExtResource( 1 )
+weapon_shoot_point = Vector2( 0, -8 )
+weapon_shoot_sound = ExtResource( 2 )
 
 [node name="Bullets" type="Node" parent="."]
-
-[node name="ShootSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 2 )
-bus = "Sound Effects"
-[connection signal="timeout" from="TimerCooldown" to="." method="_on_TimerCooldown_timeout"]
