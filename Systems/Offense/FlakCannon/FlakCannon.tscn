@@ -4,11 +4,12 @@
 [ext_resource path="res://Assets/Audio/laserShot2.wav" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends \"res://Systems/Offense/BaseWeapon.gd\"
+script/source = "extends BaseWeapon
+
+class_name FlakCannon
 
 export (int, 20, 160, 5) var spread: int = 30
 var bullet = load(\"res://Systems/Offense/FlakCannon/FlakCannonBullet.tscn\")
-
 
 func _init_variables():
 	damage = 10

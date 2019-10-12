@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name BaseWeapon
+
 export (int) var weapon_type: int
 export (float) var cooldown: float
 export (int) var damage: int

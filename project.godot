@@ -8,9 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "BaseEnemy",
+"language": "GDScript",
+"path": "res://Enemies/BaseEnemy.gd"
+}, {
+"base": "Node2D",
+"class": "BaseWeapon",
+"language": "GDScript",
+"path": "res://Systems/Offense/BaseWeapon.gd"
+}, {
+"base": "Node",
+"class": "Constants",
+"language": "GDScript",
+"path": "res://SharedScripts/Constants.gd"
+} ]
 _global_script_class_icons={
-
+"BaseEnemy": "",
+"BaseWeapon": "",
+"Constants": ""
 }
 
 [application]
