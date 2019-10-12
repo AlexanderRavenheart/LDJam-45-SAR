@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/Systems/systems_dumbMissile.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends BaseWeapon
+
+var bullet = preload(\"res://Systems/Offense/DumbMissiles/DumbMissile.tscn\")
+
+func _shoot():
+	var bullet_instance: Area2D = bullet.instance()
+	bullet_instance.position = to_global($WeaponShootPoint.position)
+	bullet_instance.rotation_degrees = global_rotation_degrees
+	bullet_instance.weapon = self;
+	$Bullets.add_child(bullet_instance)
+"
+
+[node name="DumbMissileLauncher" type="Node2D"]
+script = SubResource( 1 )
+weapon_level = 1
+cooldown = 1.5
+base_damage = 10
+damage_type = 1
+weapon_sprite = ExtResource( 1 )
+weapon_shoot_point = Vector2( 0, -10 )
+
+[node name="Bullets" type="Node" parent="."]

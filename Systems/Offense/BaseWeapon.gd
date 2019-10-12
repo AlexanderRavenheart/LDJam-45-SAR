@@ -7,7 +7,7 @@ export (int) var weapon_level: int
 export (float) var cooldown: float
 var damage: int
 export (int) var base_damage: int
-export (int) var damage_type: int
+export (Constants.DamageType) var damage_type
 
 export (Texture) var weapon_sprite: Texture
 export (Vector2) var weapon_shoot_point: Vector2

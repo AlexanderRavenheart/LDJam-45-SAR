@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Assets/Systems/systems_smartMissileMissile.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends BaseBullet
+
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 13, 20 )
+
+[node name="Node2D" type="Area2D"]
+script = SubResource( 1 )
+life = 50.0
+sprite = ExtResource( 1 )
+collision_shape = SubResource( 2 )

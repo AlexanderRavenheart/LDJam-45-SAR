@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Systems/Offense/PulseLaser/PulseLaser.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Systems/Offense/VulkanCannon/VulcanCannon.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Systems/Offense/DumbMissiles/DumbMissileLauncher.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Systems/Offense/SmartMissiles/SmartMissileLauncher.tscn" type="PackedScene" id=6]
 
 [node name="Node2D" type="Node2D"]
 
@@ -11,6 +13,7 @@
 position = Vector2( 100, 50 )
 rotation = 3.14159
 cooldown = 0.7
+damage_type = 0
 
 [node name="PulseLaser" parent="." instance=ExtResource( 2 )]
 position = Vector2( 200, 50 )
@@ -23,4 +26,12 @@ rotation = 3.14159
 
 [node name="LaserBeam" parent="." instance=ExtResource( 4 )]
 position = Vector2( 400, 50 )
+rotation = 3.14159
+
+[node name="DumbMissileLauncher" parent="." instance=ExtResource( 5 )]
+position = Vector2( 500, 50 )
+rotation = 3.14159
+
+[node name="SmartMissileLauncher" parent="." instance=ExtResource( 6 )]
+position = Vector2( 600, 50 )
 rotation = 3.14159
