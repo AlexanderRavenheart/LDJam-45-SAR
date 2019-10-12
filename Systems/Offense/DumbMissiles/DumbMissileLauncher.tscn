@@ -16,6 +16,7 @@ func _shoot():
 "
 
 [node name="DumbMissileLauncher" type="Node2D"]
+z_index = 1
 script = SubResource( 1 )
 weapon_level = 1
 cooldown = 1.5

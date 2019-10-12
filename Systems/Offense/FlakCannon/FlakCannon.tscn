@@ -23,6 +23,7 @@ func _shoot()->void:
 "
 
 [node name="FlakCannon" type="Node2D"]
+z_index = 1
 script = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true

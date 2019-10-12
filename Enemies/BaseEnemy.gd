@@ -33,9 +33,17 @@ onready var EnemyWeapons = Node2D.new()
 func _ready():
 	_init_variables()
 	_init_nodes()
+	build_ship()
 
 func _init_variables()->void:
 	pass
+	
+func build_ship()->void:
+	$Graphic/Chassis.frame = randi() % 7
+	$Graphic/Body.frame = randi() % 6
+	$Graphic/Top.frame = randi() % 6
+	$Graphic/WingLeft.frame = randi() % 6
+	$Graphic/WingRight.frame = randi() % 6
 
 func _init_nodes()->void:
 	if (sprite):
@@ -45,7 +53,7 @@ func _init_nodes()->void:
 		add_child(EnemySprite)
 	else:
 		EnemyGraphic = Node2D.new()
-		EnemyGraphic.set_name("EnemyGraphic")
+		EnemyGraphic.set_name("Graphic")
 		
 		Glow = Sprite.new()
 		Glow.set_name("Glow")
@@ -53,18 +61,28 @@ func _init_nodes()->void:
 		Chassis = Sprite.new()
 		Chassis.set_name("Chassis")
 		Chassis.set_texture(chassis)
+		Chassis.hframes = 6
 		Body = Sprite.new()
 		Body.set_name("Body")
 		Body.set_texture(body)
+		Body.hframes = 6
+		Body.position = Vector2(0.0, 7.0)
 		Top = Sprite.new()
 		Top.set_name("Top")
 		Top.set_texture(top)
+		Top.hframes = 6
+		Top.position = Vector2(0.0, -19.5)
 		WingLeft = Sprite.new()
 		WingLeft.set_name("WingLeft")
 		WingLeft.set_texture(wing_left)
+		WingLeft.hframes = 6
+		WingLeft.position = Vector2(-24.0, 4.0)
 		WingRight = Sprite.new()
 		WingRight.set_name("WingRight")
 		WingRight.set_texture(wing_right)
+		WingRight.hframes = 6
+		WingRight.position = Vector2(24.0, 4.0)
+		WingRight.scale = Vector2(-1.0, 1.0)
 		
 		EnemyGraphic.add_child(Glow)
 		EnemyGraphic.add_child(Chassis)

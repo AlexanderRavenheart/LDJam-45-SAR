@@ -13,6 +13,8 @@ func _ready():
 	warp_buffer *= get_parent().scale.x
 
 func _integrate_forces(state):
+	screen_size = get_viewport_rect().size
+	warp_buffer *= get_parent().scale.x
 	if get_parent() is RigidBody2D:
 		# warp around the level
 		var new_pos = Vector2(
@@ -22,6 +24,8 @@ func _integrate_forces(state):
 		state.transform.origin = new_pos
 
 func _physics_process(delta):
+	screen_size = get_viewport_rect().size
+	warp_buffer *= get_parent().scale.x
 	var parent = get_parent()
 	if not parent is RigidBody2D:
 		# warp around the level

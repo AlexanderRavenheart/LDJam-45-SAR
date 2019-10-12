@@ -11,7 +11,9 @@ script/source = "extends BaseBullet
 extents = Vector2( 13, 20 )
 
 [node name="Node2D" type="Area2D"]
+z_index = -1
 script = SubResource( 1 )
 life = 50.0
+move_speed = 500
 sprite = ExtResource( 1 )
 collision_shape = SubResource( 2 )

@@ -11,6 +11,7 @@ script/source = "extends BaseBullet
 extents = Vector2( 3, 6 )
 
 [node name="VulcanCannonBullet" type="Area2D"]
+z_index = -1
 collision_layer = 2
 script = SubResource( 1 )
 __meta__ = {
