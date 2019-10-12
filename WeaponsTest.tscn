@@ -1,14 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Systems/Offense/FlakCannon/FlakCannon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Systems/Offense/PulseLaser/PulseLaser.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Systems/Offense/VulkanCannon/VulcanCannon.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/Systems/newsh1.shp.000000.png" type="Texture" id=4]
-[ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=5]
-
-[sub_resource type="AtlasTexture" id=1]
-atlas = ExtResource( 4 )
-region = Rect2( 147, 56, 19, 28 )
+[ext_resource path="res://Systems/Offense/LaserBeam.tscn" type="PackedScene" id=4]
 
 [node name="Node2D" type="Node2D"]
 
@@ -25,8 +20,7 @@ cooldown = 0.6
 [node name="VulcanCannon" parent="." instance=ExtResource( 3 )]
 position = Vector2( 300, 50 )
 rotation = 3.14159
-weapon_sprite = SubResource( 1 )
 
-[node name="LaserBeam" parent="." instance=ExtResource( 5 )]
+[node name="LaserBeam" parent="." instance=ExtResource( 4 )]
 position = Vector2( 400, 50 )
 rotation = 3.14159

@@ -6,7 +6,7 @@
 script/source = "extends BaseBullet
 "
 
-[sub_resource type="AtlasTexture" id=2]
+[sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 1 )
 region = Rect2( 168, 222, 31, 71 )
 
@@ -14,11 +14,12 @@ region = Rect2( 168, 222, 31, 71 )
 normal = Vector2( 2, -1 )
 
 [node name="PulseLaserBullet" type="Area2D"]
+scale = Vector2( 0.5, 0.5 )
 collision_layer = 2
 script = SubResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
 life = 4.0
-sprite = SubResource( 2 )
+sprite = SubResource( 4 )
 collision_shape = SubResource( 3 )

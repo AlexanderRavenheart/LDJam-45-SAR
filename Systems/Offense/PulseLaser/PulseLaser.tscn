@@ -33,7 +33,7 @@ __meta__ = {
 "_edit_group_": true
 }
 weapon_level = 1
-cooldown = 0.1
+cooldown = 0.7
 base_damage = 2
 weapon_sprite = ExtResource( 1 )
 weapon_shoot_point = Vector2( 0, -8 )

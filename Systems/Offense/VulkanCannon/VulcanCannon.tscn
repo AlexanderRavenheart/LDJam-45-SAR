@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Assets/Systems/systems_burstLaser.png" type="Texture" id=1]
+[ext_resource path="res://Assets/Systems/Vulcan.png" type="Texture" id=1]
 [ext_resource path="res://Assets/Audio/Minigun-Jim_Rogers-633894726.wav" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
@@ -9,6 +9,11 @@ script/source = "extends BaseWeapon
 class_name VulcanCannon
 
 var bullet = preload(\"res://Systems/Offense/VulkanCannon/VulcanCannonBullet.tscn\")
+var bullet_position = 0.0
+var bullet_position_change = 1.0
+var bullet_position_direction = 1.0
+var bullet_position_max = 3.0
+var bullet_position_min = -3.0
 
 func _start_shooting():
 	._start_shooting()
@@ -19,8 +24,20 @@ func _stop_shooting():
 	$WeaponShootSound.stop()
 
 func _shoot()->void:
+	bullet_position_change = -3.0 + 3.0 * randf()
+	if randf() > 0.5:
+		bullet_position_direction = 1.0
+	else:
+		bullet_position_direction = -1.0
+	bullet_position += bullet_position_change * bullet_position_direction
+	if bullet_position >= bullet_position_max:
+		bullet_position = bullet_position_max
+		bullet_position_direction *= -1.0
+	if bullet_position <= bullet_position_min:
+		bullet_position = bullet_position_min
+		bullet_position_direction *= -1.0
 	var bullet_instance: Area2D = bullet.instance()
-	bullet_instance.position = to_global($WeaponShootPoint.position)
+	bullet_instance.position = to_global($WeaponShootPoint.position) + Vector2(bullet_position, 0.0)
 	bullet_instance.rotation_degrees = global_rotation_degrees
 	bullet_instance.weapon = self;
 	$Bullets.add_child(bullet_instance)
